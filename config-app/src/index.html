@@ -1124,46 +1124,61 @@
                         </div>
                         
                         <div id="uc-not-logged-in">
-                            <div class="grid-2 mb-6">
-                                <div class="section" style="margin: 0;">
-                                    <h3 class="section-title">登录</h3>
-                                    <div class="form-group">
-                                        <label class="form-label">用户名</label>
-                                        <input type="text" class="input" id="uc-login-username" placeholder="请输入用户名">
+                            <div class="section" style="max-width: 400px; margin: 0 auto;">
+                                <div id="uc-auth-header" style="text-align: center; margin-bottom: var(--space-6);">
+                                    <div id="uc-welcome-back" class="hidden" style="margin-bottom: var(--space-4);">
+                                        <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-3); font-size: 24px; font-weight: 600; color: var(--text-secondary);" id="uc-avatar"></div>
+                                        <div style="font-size: 16px; font-weight: 500;" id="uc-welcome-name"></div>
+                                        <div style="font-size: 12px; color: var(--text-muted);">欢迎回来</div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="form-label">密码</label>
-                                        <input type="password" class="input" id="uc-login-password" placeholder="请输入密码">
-                                    </div>
-                                    <button class="btn btn-primary" onclick="doLogin()" style="width: 100%;">登录</button>
                                 </div>
                                 
-                                <div class="section" style="margin: 0;">
-                                    <h3 class="section-title">注册新账号</h3>
-                                    <div class="form-group">
-                                        <label class="form-label">用户名</label>
-                                        <input type="text" class="input" id="uc-reg-username" placeholder="请输入用户名">
+                                <div id="uc-auth-form">
+                                    <div id="uc-form-register">
+                                        <div class="form-group">
+                                            <label class="form-label">用户名</label>
+                                            <input type="text" class="input" id="uc-reg-username" placeholder="请输入用户名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">邮箱</label>
+                                            <input type="email" class="input" id="uc-reg-email" placeholder="请输入邮箱">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">密码</label>
+                                            <input type="password" class="input" id="uc-reg-password" placeholder="请输入密码（至少8位）">
+                                        </div>
+                                        <button class="btn btn-primary" onclick="doRegister()" style="width: 100%; margin-bottom: var(--space-4);">注册</button>
+                                        <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
+                                            已有账号？<a href="javascript:void(0)" onclick="switchToLogin()" style="color: var(--primary); text-decoration: none;">立即登录</a>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="form-label">邮箱</label>
-                                        <input type="email" class="input" id="uc-reg-email" placeholder="请输入邮箱">
+                                    
+                                    <div id="uc-form-login" class="hidden">
+                                        <div class="form-group">
+                                            <label class="form-label">用户名</label>
+                                            <input type="text" class="input" id="uc-login-username" placeholder="请输入用户名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">密码</label>
+                                            <input type="password" class="input" id="uc-login-password" placeholder="请输入密码">
+                                        </div>
+                                        <button class="btn btn-primary" onclick="doLogin()" style="width: 100%; margin-bottom: var(--space-4);">登录</button>
+                                        <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
+                                            <span id="uc-switch-account-link">没有账号？<a href="javascript:void(0)" onclick="switchToRegister()" style="color: var(--primary); text-decoration: none;">立即注册</a></span>
+                                            <span id="uc-use-other-link" class="hidden"><a href="javascript:void(0)" onclick="switchToRegister()" style="color: var(--primary); text-decoration: none;">使用其他账号</a></span>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="form-label">密码</label>
-                                        <input type="password" class="input" id="uc-reg-password" placeholder="请输入密码（至少8位）">
-                                    </div>
-                                    <button class="btn btn-secondary" onclick="doRegister()" style="width: 100%;">注册</button>
                                 </div>
-                            </div>
-                            
-                            <div class="card" style="background: var(--bg-tertiary); padding: var(--space-4); cursor: default;">
-                                <h4 style="margin-bottom: var(--space-2);">为什么使用托管服务？</h4>
-                                <ul style="color: var(--text-muted); padding-left: var(--space-4); margin: 0; text-align: left;">
-                                    <li>无需自己申请各家 API Key</li>
-                                    <li>统一的计费和用量管理</li>
-                                    <li>预配置的最优模型组合</li>
-                                    <li>一键切换到托管模式</li>
-                                </ul>
+                                
+                                <div class="card" style="background: var(--bg-tertiary); padding: var(--space-4); cursor: default; margin-top: var(--space-6);">
+                                    <h4 style="margin-bottom: var(--space-2); font-size: 14px;">为什么使用托管服务？</h4>
+                                    <ul style="color: var(--text-muted); padding-left: var(--space-4); margin: 0; text-align: left; font-size: 13px;">
+                                        <li>无需自己申请各家 API Key</li>
+                                        <li>统一的计费和用量管理</li>
+                                        <li>预配置的最优模型组合</li>
+                                        <li>一键切换到托管模式</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         
@@ -3721,7 +3736,8 @@
             logs: [],
             currentPage: 1,
             totalPages: 1,
-            pageSize: 10
+            pageSize: 10,
+            lastUsername: localStorage.getItem('uc_last_username') || ''
         };
 
         async function loadUserCenter() {
@@ -3730,12 +3746,17 @@
                 if (configResult.success) {
                     ucState.config = configResult.data;
                     ucState.selectedPlan = configResult.data.plan || 'free';
+                    if (configResult.data.username) {
+                        ucState.lastUsername = configResult.data.username;
+                    }
                 }
                 if (ucState.config && ucState.config.enabled) {
                     const userResult = await window.api.hostedGetCurrentUser();
                     if (userResult.success && userResult.data && userResult.data.data) {
                         ucState.loggedIn = true;
                         ucState.user = userResult.data.data;
+                        ucState.lastUsername = ucState.user.username;
+                        localStorage.setItem('uc_last_username', ucState.lastUsername);
                         showLoggedIn();
                         return;
                     }
@@ -3751,6 +3772,40 @@
             ucState.loggedIn = false;
             el('uc-not-logged-in').classList.remove('hidden');
             el('uc-logged-in').classList.add('hidden');
+            
+            if (ucState.lastUsername) {
+                el('uc-welcome-back').classList.remove('hidden');
+                el('uc-avatar').textContent = ucState.lastUsername.charAt(0).toUpperCase();
+                el('uc-welcome-name').textContent = ucState.lastUsername;
+                el('uc-login-username').value = ucState.lastUsername;
+                el('uc-form-register').classList.add('hidden');
+                el('uc-form-login').classList.remove('hidden');
+                el('uc-switch-account-link').classList.add('hidden');
+                el('uc-use-other-link').classList.remove('hidden');
+            } else {
+                el('uc-welcome-back').classList.add('hidden');
+                el('uc-form-register').classList.remove('hidden');
+                el('uc-form-login').classList.add('hidden');
+            }
+        }
+
+        function switchToLogin() {
+            el('uc-form-register').classList.add('hidden');
+            el('uc-form-login').classList.remove('hidden');
+            el('uc-switch-account-link').classList.remove('hidden');
+            el('uc-use-other-link').classList.add('hidden');
+            el('uc-welcome-back').classList.add('hidden');
+            el('uc-login-username').value = '';
+            el('uc-login-password').value = '';
+        }
+
+        function switchToRegister() {
+            el('uc-form-login').classList.add('hidden');
+            el('uc-form-register').classList.remove('hidden');
+            el('uc-welcome-back').classList.add('hidden');
+            el('uc-reg-username').value = '';
+            el('uc-reg-email').value = '';
+            el('uc-reg-password').value = '';
         }
 
         async function showLoggedIn() {
@@ -3780,6 +3835,9 @@
                 if (result.success) {
                     showToast('登录成功');
                     ucState.loggedIn = true;
+                    ucState.lastUsername = username;
+                    localStorage.setItem('uc_last_username', username);
+                    await window.api.hostedSaveConfig({ username: username });
                     const userResult = await window.api.hostedGetCurrentUser();
                     if (userResult.success && userResult.data && userResult.data.data) {
                         ucState.user = userResult.data.data;
@@ -3799,7 +3857,17 @@
                 const result = await window.api.hostedRegister(username, password, email, '', '');
                 if (result.success) {
                     showToast('注册成功，请登录');
+                    ucState.lastUsername = username;
+                    localStorage.setItem('uc_last_username', username);
+                    el('uc-welcome-back').classList.remove('hidden');
+                    el('uc-avatar').textContent = username.charAt(0).toUpperCase();
+                    el('uc-welcome-name').textContent = username;
+                    el('uc-form-register').classList.add('hidden');
+                    el('uc-form-login').classList.remove('hidden');
                     el('uc-login-username').value = username;
+                    el('uc-login-password').value = '';
+                    el('uc-switch-account-link').classList.add('hidden');
+                    el('uc-use-other-link').classList.remove('hidden');
                 } else { showToast('注册失败: ' + result.error); }
             } catch (e) { showToast('注册失败: ' + e.message); }
         }
