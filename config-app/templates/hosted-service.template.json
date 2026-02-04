@@ -1,0 +1,14 @@
+{
+  "$schema": "https://oh-my-opencode.dev/hosted-service.schema.json",
+  "enabled": false,
+  "baseUrl": "https://api.ohmyopencode.com",
+  "username": "",
+  "apiKey": "",
+  "plan": "free",
+  "lastLogin": null,
+  "_comment_plans": {
+    "free": "DeepSeek + Gemini Flash - 适合轻度使用",
+    "pro": "Claude Sonnet + Gemini Pro - 日常开发推荐",
+    "ultimate": "Claude Opus + GPT-5 + o1 - 复杂项目首选"
+  }
+}

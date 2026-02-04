@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenCode Enchant - AI 编程工具的附魔版本</title>
+  <meta name="description" content="OpenCode Enchant 为 OpenCode 注入多 Agent 协作、智能强化、专业提示词和 Skills 扩展，让 AI 编程效率提升 10 倍">
+  
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { mono: ['JetBrains Mono', 'monospace'], sans: ['Noto Sans SC', 'sans-serif'] },
+          colors: { enchant: { purple: '#a855f7', blue: '#3b82f6', cyan: '#06b6d4', pink: '#ec4899' } }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    :root { --enchant-glow: rgba(168, 85, 247, 0.15); }
+    body { font-family: 'Noto Sans SC', sans-serif; background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%); min-height: 100vh; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .enchant-border { border: 1px solid rgba(168, 85, 247, 0.3); background: rgba(15, 15, 26, 0.8); backdrop-filter: blur(12px); }
+    .text-gradient { background: linear-gradient(135deg, #a855f7 0%, #3b82f6 50%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .text-gradient-warm { background: linear-gradient(135deg, #f472b6 0%, #a855f7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 0 60px rgba(168, 85, 247, 0.2); border-color: rgba(168, 85, 247, 0.5); }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    @keyframes pulse-glow { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #1a1a2e; }
+    ::-webkit-scrollbar-thumb { background: #a855f7; border-radius: 4px; }
+    section { scroll-margin-top: 80px; }
+  </style>
+</head>
+
+<body class="text-gray-100">
+<div id="app">
+
+<!-- SECTION 1: HERO -->
+<section class="min-h-screen flex items-center justify-center relative overflow-hidden">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-glow"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse-glow" style="animation-delay: 1.5s;"></div>
+  </div>
+  
+  <div class="container mx-auto px-6 text-center relative z-10">
+    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full enchant-border mb-8 animate-float">
+      <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+      <span class="text-sm font-medium">OpenCode 的附魔版本</span>
+    </div>
+    
+    <h1 class="text-5xl md:text-7xl font-bold mb-6">
+      <span class="text-gradient">OpenCode</span><span class="text-white"> Enchant</span>
+    </h1>
+    
+    <p class="text-xl md:text-2xl text-gray-300 mb-4 max-w-3xl mx-auto">
+      为 OpenCode 注入<span class="text-purple-400 font-semibold">多 Agent 协作</span>、
+      <span class="text-blue-400 font-semibold">智能强化</span>、
+      <span class="text-cyan-400 font-semibold">专业提示词</span>和
+      <span class="text-pink-400 font-semibold">Skills 扩展</span>
+    </p>
+    <p class="text-lg text-gray-400 mb-12 max-w-2xl mx-auto">整合一系列工具和最佳实践，让 AI 编程从「能用」变成「好用」</p>
+    
+    <div class="flex flex-wrap justify-center gap-8 mb-12">
+      <div class="text-center"><div class="text-4xl font-bold text-gradient">10x</div><div class="text-sm text-gray-400 mt-1">效率提升</div></div>
+      <div class="text-center"><div class="text-4xl font-bold text-gradient">50%</div><div class="text-sm text-gray-400 mt-1">成本降低</div></div>
+      <div class="text-center"><div class="text-4xl font-bold text-gradient">Pro</div><div class="text-sm text-gray-400 mt-1">输出质量</div></div>
+    </div>
+    
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="#quick-start" class="btn btn-lg bg-gradient-to-r from-purple-600 to-blue-600 border-0 text-white hover:opacity-90">
+        <i data-lucide="download" class="w-5 h-5 mr-2"></i>开始附魔
+      </a>
+      <a href="https://github.com/anthropics/opencode" target="_blank" class="btn btn-lg btn-outline border-gray-600 hover:bg-gray-800">
+        <i data-lucide="github" class="w-5 h-5 mr-2"></i>OpenCode 官方
+      </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="problems" class="py-24 relative">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">AI 编程工具的<span class="text-gradient-warm">三大通病</span></h2>
+      <p class="text-gray-400 max-w-2xl mx-auto">无论是 Cursor、Windsurf、Trae 还是 Claude Code，都面临相似的困境</p>
+    </div>
+    
+    <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div class="enchant-border rounded-2xl p-8 card-hover">
+        <div class="w-14 h-14 rounded-xl bg-red-500/20 flex items-center justify-center mb-6">
+          <i data-lucide="snail" class="w-7 h-7 text-red-400"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-red-400">效率瓶颈</h3>
+        <p class="text-gray-400 text-sm leading-relaxed mb-4">单 Agent 串行工作，遇到复杂任务只能一步步来。探索代码库、查文档、写代码全靠一个脑子。</p>
+        <div class="text-xs text-gray-500 font-mono bg-gray-800/50 rounded-lg p-3">
+          <div class="text-red-400/80">// 典型场景</div>
+          <div>用户: "帮我加个用户认证"</div>
+          <div class="text-gray-600">AI: 先看看代码结构...</div>
+          <div class="text-gray-600">AI: 再查查 JWT 文档...</div>
+          <div class="text-gray-600">// 30分钟过去了...</div>
+        </div>
+      </div>
+      
+      <div class="enchant-border rounded-2xl p-8 card-hover">
+        <div class="w-14 h-14 rounded-xl bg-orange-500/20 flex items-center justify-center mb-6">
+          <i data-lucide="bug" class="w-7 h-7 text-orange-400"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-orange-400">质量不稳定</h3>
+        <p class="text-gray-400 text-sm leading-relaxed mb-4">没有专业领域知识注入，前端写得像后端，UI 设计毫无美感。代码能跑但不够好。</p>
+        <div class="text-xs text-gray-500 font-mono bg-gray-800/50 rounded-lg p-3">
+          <div class="text-orange-400/80">// 典型产出</div>
+          <div>&lt;button style="</div>
+          <div class="pl-2">background: blue;</div>
+          <div class="pl-2">color: white;"&gt;</div>
+          <div class="text-gray-600">// 能用，但丑...</div>
+        </div>
+      </div>
+      
+      <div class="enchant-border rounded-2xl p-8 card-hover">
+        <div class="w-14 h-14 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-6">
+          <i data-lucide="unplug" class="w-7 h-7 text-yellow-400"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3 text-yellow-400">能力边界</h3>
+        <p class="text-gray-400 text-sm leading-relaxed mb-4">只能读写代码，无法连接数据库、调用 API、生成图片、部署服务。很多事情做不了。</p>
+        <div class="text-xs text-gray-500 font-mono bg-gray-800/50 rounded-lg p-3">
+          <div class="text-yellow-400/80">// 典型对话</div>
+          <div>用户: "帮我查下数据库"</div>
+          <div class="text-gray-600">AI: 抱歉，我无法直接连接...</div>
+          <div>用户: "帮我部署到云上"</div>
+          <div class="text-gray-600">AI: 我只能给你命令...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="solution" class="py-24 relative">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4"><span class="text-gradient">四大附魔</span>，全面增强</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto">OpenCode Enchant 从四个维度为 OpenCode 注入能力</p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+      <a href="#efficiency" class="enchant-border rounded-2xl p-6 card-hover group cursor-pointer">
+        <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+          <i data-lucide="zap" class="w-6 h-6 text-purple-400"></i>
+        </div>
+        <h3 class="text-lg font-bold mb-2 text-purple-400">效率提升</h3>
+        <p class="text-gray-400 text-sm">多 Agent 并行协作 + 智能强化机制</p>
+      </a>
+      
+      <a href="#quality" class="enchant-border rounded-2xl p-6 card-hover group cursor-pointer">
+        <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+          <i data-lucide="award" class="w-6 h-6 text-blue-400"></i>
+        </div>
+        <h3 class="text-lg font-bold mb-2 text-blue-400">质量保障</h3>
+        <p class="text-gray-400 text-sm">专业提示词注入 + UI/UX 设计智能</p>
+      </a>
+      
+      <a href="#capabilities" class="enchant-border rounded-2xl p-6 card-hover group cursor-pointer">
+        <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+          <i data-lucide="puzzle" class="w-6 h-6 text-cyan-400"></i>
+        </div>
+        <h3 class="text-lg font-bold mb-2 text-cyan-400">能力扩展</h3>
+        <p class="text-gray-400 text-sm">Skills 系统赋予执行能力</p>
+      </a>
+      
+      <a href="#cost" class="enchant-border rounded-2xl p-6 card-hover group cursor-pointer">
+        <div class="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+          <i data-lucide="piggy-bank" class="w-6 h-6 text-pink-400"></i>
+        </div>
+        <h3 class="text-lg font-bold mb-2 text-pink-400">成本优化</h3>
+        <p class="text-gray-400 text-sm">智能路由降低 50% 开销</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="efficiency" class="py-24 relative bg-gradient-to-b from-transparent via-purple-900/5 to-transparent">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-sm mb-4">
+        <i data-lucide="zap" class="w-4 h-4"></i>附魔一
+      </div>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4"><span class="text-purple-400">效率提升</span>：从串行到并行</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto">多 Agent 协作 + 智能强化机制，让复杂任务高效完成</p>
+    </div>
+
+    <div class="mb-16">
+      <h3 class="text-2xl font-bold text-center mb-8"><i data-lucide="users" class="w-6 h-6 inline mr-2 text-purple-400"></i>多 Agent 协作</h3>
+      <p class="text-gray-400 text-center mb-10 max-w-3xl mx-auto">不同 Agent 各有所长，协作完成复杂任务。就像一个团队：有人负责探索、有人负责思考、有人负责执行。</p>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <div class="enchant-border rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center"><i data-lucide="mountain" class="w-5 h-5 text-purple-400"></i></div>
+            <h4 class="font-bold text-purple-400">Sisyphus</h4>
+          </div>
+          <p class="text-sm text-gray-400 mb-3">主执行者，负责任务编排和代码实现</p>
+          <div class="text-xs font-mono bg-gray-800/50 rounded p-2 text-gray-500 mb-2">擅长：任务分解、代码编写、流程控制</div>
+          <div class="text-xs text-purple-400/80">推荐：Claude Opus / Sonnet</div>
+        </div>
+        
+        <div class="enchant-border rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center"><i data-lucide="brain" class="w-5 h-5 text-blue-400"></i></div>
+            <h4 class="font-bold text-blue-400">Oracle</h4>
+          </div>
+          <p class="text-sm text-gray-400 mb-3">高智商顾问，处理复杂架构和疑难问题</p>
+          <div class="text-xs font-mono bg-gray-800/50 rounded p-2 text-gray-500 mb-2">擅长：架构设计、疑难调试、技术决策</div>
+          <div class="text-xs text-blue-400/80">推荐：Claude Opus / o1</div>
+        </div>
+        
+        <div class="enchant-border rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center"><i data-lucide="book-open" class="w-5 h-5 text-cyan-400"></i></div>
+            <h4 class="font-bold text-cyan-400">Librarian</h4>
+          </div>
+          <p class="text-sm text-gray-400 mb-3">文档专家，查阅外部资料和最佳实践</p>
+          <div class="text-xs font-mono bg-gray-800/50 rounded p-2 text-gray-500 mb-2">擅长：查文档、找示例、搜开源代码</div>
+          <div class="text-xs text-cyan-400/80">推荐：Gemini Pro / Flash</div>
+        </div>
+        
+        <div class="enchant-border rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center"><i data-lucide="search" class="w-5 h-5 text-green-400"></i></div>
+            <h4 class="font-bold text-green-400">Explore</h4>
+          </div>
+          <p class="text-sm text-gray-400 mb-3">代码探索者，快速理解项目结构</p>
+          <div class="text-xs font-mono bg-gray-800/50 rounded p-2 text-gray-500 mb-2">擅长：代码搜索、模式发现、上下文理解</div>
+          <div class="text-xs text-green-400/80">推荐：Gemini Flash</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 max-w-4xl mx-auto enchant-border rounded-2xl p-8 mb-16">
+      <h4 class="font-bold mb-4 flex items-center gap-2"><i data-lucide="git-branch" class="w-5 h-5 text-purple-400"></i>协作示例：实现用户认证功能</h4>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <div class="text-sm text-red-400 mb-2">❌ 传统方式（串行）</div>
+          <div class="text-xs font-mono bg-gray-800/50 rounded p-3 text-gray-400 space-y-1">
+            <div>1. 探索代码结构 <span class="text-gray-600">// 5分钟</span></div>
+            <div>2. 查 JWT 文档 <span class="text-gray-600">// 3分钟</span></div>
+            <div>3. 查数据库 schema <span class="text-gray-600">// 2分钟</span></div>
+            <div>4. 开始写代码 <span class="text-gray-600">// 15分钟</span></div>
+            <div class="text-red-400/80 pt-2 border-t border-gray-700">总计：25+ 分钟</div>
+          </div>
+        </div>
+        <div>
+          <div class="text-sm text-green-400 mb-2">✅ Enchant 方式（并行）</div>
+          <div class="text-xs font-mono bg-gray-800/50 rounded p-3 text-gray-400 space-y-1">
+            <div><span class="text-green-400">Explore</span> → 探索代码结构</div>
+            <div><span class="text-cyan-400">Librarian</span> → 查 JWT 最佳实践</div>
+            <div><span class="text-purple-400">Sisyphus</span> → 同时开始写代码</div>
+            <div class="text-gray-600">↓ 信息汇总后继续</div>
+            <div class="text-green-400/80 pt-2 border-t border-gray-700">总计：8 分钟</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="text-2xl font-bold text-center mb-8"><i data-lucide="repeat" class="w-6 h-6 inline mr-2 text-purple-400"></i>智能强化机制</h3>
+      <p class="text-gray-400 text-center mb-10 max-w-3xl mx-auto">通过一系列机制确保 AI 持续高效工作，不偏离目标、不遗漏任务</p>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center"><i data-lucide="list-checks" class="w-4 h-4 text-purple-400"></i></div>
+            <h4 class="font-semibold">Todo 驱动</h4>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="text-2xl font-bold text-center mb-8"><i data-lucide="palette" class="w-6 h-6 inline mr-2 text-blue-400"></i>UI/UX 设计智能</h3>
+      <p class="text-gray-400 text-center mb-10 max-w-3xl mx-auto">即使没有设计稿，也能输出专业级 UI。三层触发机制确保设计质量。</p>
+      
+      <div class="max-w-4xl mx-auto enchant-border rounded-2xl p-8">
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+          <div class="text-center">
+            <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-3"><span class="text-lg font-bold text-blue-400">1</span></div>
+            <h4 class="font-semibold mb-2">Category 触发</h4>
+            <p class="text-xs text-gray-400">visual-engineering 自动注入设计原则</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-3"><span class="text-lg font-bold text-purple-400">2</span></div>
+            <h4 class="font-semibold mb-2">Skill 触发</h4>
+            <p class="text-xs text-gray-400">frontend-ui-ux Skill 提供设计方法论</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 rounded-full bg-pink-500/20 flex items-center justify-center mx-auto mb-3"><span class="text-lg font-bold text-pink-400">3</span></div>
+            <h4 class="font-semibold mb-2">关键词触发</h4>
+            <p class="text-xs text-gray-400">"好看"、"美观" 等词自动激活设计模式</p>
+          </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <div class="text-sm text-red-400 mb-2">❌ 普通 AI 输出</div>
+            <div class="bg-gray-800/50 rounded-lg p-4">
+              <div class="bg-blue-600 text-white text-center py-2 px-4 rounded text-sm">Click Me</div>
+              <p class="text-xs text-gray-500 mt-2">能用，但毫无设计感</p>
+            </div>
+          </div>
+          <div>
+            <div class="text-sm text-green-400 mb-2">✅ Enchant 输出</div>
+            <div class="bg-gray-800/50 rounded-lg p-4">
+              <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white text-center py-3 px-6 rounded-lg text-sm font-medium shadow-lg shadow-purple-500/25">✨ Get Started</div>
+              <p class="text-xs text-gray-500 mt-2">渐变、阴影、动效、图标一应俱全</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center"><i data-lucide="git-pull-request" class="w-4 h-4 text-blue-400"></i></div>
+            <h4 class="font-semibold">委派提醒</h4>
+          </div>
+          <p class="text-sm text-gray-400">遇到专业任务自动提醒委派给合适的 Agent</p>
+        </div>
+        
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center"><i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i></div>
+            <h4 class="font-semibold">错误恢复</h4>
+          </div>
+          <p class="text-sm text-gray-400">失败自动重试，3次失败后回滚并请求帮助</p>
+        </div>
+        
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center"><i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i></div>
+            <h4 class="font-semibold">完成验证</h4>
+          </div>
+          <p class="text-sm text-gray-400">每个任务完成后自动运行诊断，确保代码正确</p>
+        </div>
+        
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center"><i data-lucide="ban" class="w-4 h-4 text-orange-400"></i></div>
+            <h4 class="font-semibold">行为约束</h4>
+          </div>
+          <p class="text-sm text-gray-400">禁止 @ts-ignore、空 catch 等坏习惯</p>
+        </div>
+        
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center"><i data-lucide="brain-circuit" class="w-4 h-4 text-pink-400"></i></div>
+            <h4 class="font-semibold">上下文管理</h4>
+          </div>
+          <p class="text-sm text-gray-400">智能清理无用信息，保持思路清晰</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="quality" class="py-24 relative bg-gradient-to-b from-transparent via-blue-900/5 to-transparent">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm mb-4">
+        <i data-lucide="award" class="w-4 h-4"></i>附魔二
+      </div>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4"><span class="text-blue-400">质量保障</span>：专业级输出</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto">通过 Category 注入专业提示词，让 AI 在不同领域都能输出专业级代码</p>
+    </div>
+
+    <div class="mb-16">
+      <h3 class="text-2xl font-bold text-center mb-8"><i data-lucide="layers" class="w-6 h-6 inline mr-2 text-blue-400"></i>Category 专业提示词注入</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3"><span class="text-2xl">🎨</span><h4 class="font-semibold text-pink-400">visual-engineering</h4></div>
+          <p class="text-sm text-gray-400 mb-2">前端、UI/UX、设计、动画</p>
+          <div class="text-xs text-gray-500">注入：设计原则、响应式、无障碍</div>
+        </div>
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3"><span class="text-2xl">🧠</span><h4 class="font-semibold text-purple-400">ultrabrain</h4></div>
+          <p class="text-sm text-gray-400 mb-2">复杂逻辑、算法、架构</p>
+          <div class="text-xs text-gray-500">注入：系统设计、性能优化</div>
+        </div>
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3"><span class="text-2xl">🔬</span><h4 class="font-semibold text-cyan-400">deep</h4></div>
+          <p class="text-sm text-gray-400 mb-2">深度研究、问题诊断</p>
+          <div class="text-xs text-gray-500">注入：根因分析、调试方法论</div>
+        </div>
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3"><span class="text-2xl">⚡</span><h4 class="font-semibold text-yellow-400">quick</h4></div>
+          <p class="text-sm text-gray-400 mb-2">简单修改、快速任务</p>
+          <div class="text-xs text-gray-500">注入：最小改动原则</div>
+        </div>
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3"><span class="text-2xl">✍️</span><h4 class="font-semibold text-green-400">writing</h4></div>
+          <p class="text-sm text-gray-400 mb-2">文档、技术写作</p>
+          <div class="text-xs text-gray-500">注入：清晰表达、结构化</div>
+        </div>
+        <div class="enchant-border rounded-xl p-5 card-hover">
+          <div class="flex items-center gap-3 mb-3"><span class="text-2xl">🎭</span><h4 class="font-semibold text-orange-400">artistry</h4></div>
+          <p class="text-sm text-gray-400 mb-2">创意方案、非常规解法</p>
+          <div class="text-xs text-gray-500">注入：创新思维、多角度探索</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="text-2xl font-bold text-center mb-8"><i data-lucide="palette" class="w-6 h-6 inline mr-2 text-blue-400"></i>UI/UX 设计智能</h3>
+      <div class="max-w-4xl mx-auto enchant-border rounded-2xl p-8">
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+          <div class="text-center">
+            <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-3"><span class="text-lg font-bold text-blue-400">1</span></div>
+            <h4 class="font-semibold mb-2">Category 触发</h4>
+            <p class="text-xs text-gray-400">visual-engineering 自动注入设计原则</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-3"><span class="text-lg font-bold text-purple-400">2</span></div>
+            <h4 class="font-semibold mb-2">Skill 触发</h4>
+            <p class="text-xs text-gray-400">frontend-ui-ux Skill 提供设计方法论</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 rounded-full bg-pink-500/20 flex items-center justify-center mx-auto mb-3"><span class="text-lg font-bold text-pink-400">3</span></div>
+            <h4 class="font-semibold mb-2">关键词触发</h4>
+            <p class="text-xs text-gray-400">"好看"、"美观" 等词自动激活</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <div class="text-sm text-red-400 mb-2">❌ 普通 AI 输出</div>
+            <div class="bg-gray-800/50 rounded-lg p-4">
+              <div class="bg-blue-600 text-white text-center py-2 px-4 rounded text-sm">Click Me</div>
+              <p class="text-xs text-gray-500 mt-2">能用，但毫无设计感</p>
+            </div>
+          </div>
+          <div>
+            <div class="text-sm text-green-400 mb-2">✅ Enchant 输出</div>
+            <div class="bg-gray-800/50 rounded-lg p-4">
+              <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white text-center py-3 px-6 rounded-lg text-sm font-medium shadow-lg shadow-purple-500/25">✨ Get Started</div>
+              <p class="text-xs text-gray-500 mt-2">渐变、阴影、动效一应俱全</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="capabilities" class="py-24 relative bg-gradient-to-b from-transparent via-cyan-900/5 to-transparent">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 text-sm mb-4">
+        <i data-lucide="puzzle" class="w-4 h-4"></i>附魔三
+      </div>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4"><span class="text-cyan-400">能力扩展</span>：Skills 系统</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto">Skills 赋予 AI 真正的执行能力，从「只能写代码」到「能做事」</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
+      <div class="enchant-border rounded-2xl p-6 card-hover">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center"><i data-lucide="globe" class="w-5 h-5 text-cyan-400"></i></div>
+          <h4 class="font-bold">浏览器自动化</h4>
+        </div>
+        <p class="text-sm text-gray-400 mb-3">Playwright Skill 让 AI 能操作浏览器</p>
+        <div class="text-xs font-mono bg-gray-800/50 rounded p-3 text-gray-500">• 打开网页、截图、填表单<br>• 自动化测试、数据抓取</div>
+      </div>
+      <div class="enchant-border rounded-2xl p-6 card-hover">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center"><i data-lucide="database" class="w-5 h-5 text-purple-400"></i></div>
+          <h4 class="font-bold">数据库操作</h4>
+        </div>
+        <p class="text-sm text-gray-400 mb-3">SQL Skill 让 AI 能直接查询数据库</p>
+        <div class="text-xs font-mono bg-gray-800/50 rounded p-3 text-gray-500">• 连接 MySQL、探索表结构<br>• 执行查询、导出数据</div>
+      </div>
+      <div class="enchant-border rounded-2xl p-6 card-hover">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center"><i data-lucide="cloud-upload" class="w-5 h-5 text-blue-400"></i></div>
+          <h4 class="font-bold">云端部署</h4>
+        </div>
+        <p class="text-sm text-gray-400 mb-3">阿里云 FC Skill 一键部署到云端</p>
+        <div class="text-xs font-mono bg-gray-800/50 rounded p-3 text-gray-500">• 创建云函数、配置触发器<br>• 自动打包上传代码</div>
+      </div>
+      <div class="enchant-border rounded-2xl p-6 card-hover">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center"><i data-lucide="image" class="w-5 h-5 text-pink-400"></i></div>
+          <h4 class="font-bold">图片生成</h4>
+        </div>
+        <p class="text-sm text-gray-400 mb-3">Image Generator Skill 生成项目素材</p>
+        <div class="text-xs font-mono bg-gray-800/50 rounded p-3 text-gray-500">• Banner、Logo、插图<br>• 占位图、头像、背景</div>
+      </div>
+    </div>
+    <div class="text-center"><p class="text-gray-500 text-sm">还有更多：Git Master、DMS 任务编排、Game Design...</p></div>
+  </div>
+</section>
+
+<section id="cost" class="py-24 relative bg-gradient-to-b from-transparent via-pink-900/5 to-transparent">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 text-sm mb-4">
+        <i data-lucide="piggy-bank" class="w-4 h-4"></i>附魔四
+      </div>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4"><span class="text-pink-400">成本优化</span>：智能路由</h2>
+      <p class="text-gray-400 max-w-2xl mx-auto">根据任务复杂度自动选择合适的模型，简单任务用便宜模型，复杂任务用强模型</p>
+    </div>
+
+    <div class="max-w-4xl mx-auto enchant-border rounded-2xl p-8">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-700">
+            <th class="text-left py-3 px-4 text-gray-400">任务类型</th>
+            <th class="text-left py-3 px-4 text-gray-400">传统方式</th>
+            <th class="text-left py-3 px-4 text-gray-400">Enchant 路由</th>
+            <th class="text-right py-3 px-4 text-gray-400">节省</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-gray-800">
+            <td class="py-3 px-4">简单修改</td>
+            <td class="py-3 px-4 text-red-400">Claude Opus</td>
+            <td class="py-3 px-4 text-green-400">Gemini Flash</td>
+            <td class="py-3 px-4 text-right text-green-400">-90%</td>
+          </tr>
+          <tr class="border-b border-gray-800">
+            <td class="py-3 px-4">代码探索</td>
+            <td class="py-3 px-4 text-red-400">Claude Opus</td>
+            <td class="py-3 px-4 text-green-400">Gemini Pro</td>
+            <td class="py-3 px-4 text-right text-green-400">-70%</td>
+          </tr>
+          <tr class="border-b border-gray-800">
+            <td class="py-3 px-4">复杂架构</td>
+            <td class="py-3 px-4 text-yellow-400">Claude Opus</td>
+            <td class="py-3 px-4 text-yellow-400">Claude Opus</td>
+            <td class="py-3 px-4 text-right text-gray-500">0%</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-bold">综合</td>
+            <td class="py-3 px-4 text-red-400">$100</td>
+            <td class="py-3 px-4 text-green-400">$50</td>
+            <td class="py-3 px-4 text-right text-green-400 font-bold">-50%</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="text-xs text-gray-500 mt-4 text-center">* 基于典型开发场景估算</p>
+    </div>
+  </div>
+</section>
+
+<section id="quick-start" class="py-24 relative">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4"><span class="text-gradient">快速开始</span></h2>
+      <p class="text-gray-400 max-w-2xl mx-auto">三步为你的 OpenCode 注入附魔</p>
+    </div>
+
+    <div class="max-w-3xl mx-auto grid gap-6">
+      <div class="enchant-border rounded-xl p-6 card-hover">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+            <span class="text-lg font-bold text-purple-400">1</span>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold mb-2">克隆 Starter 仓库</h4>
+            <div class="font-mono text-sm bg-gray-800/50 rounded-lg p-3 text-gray-300">git clone https://github.com/anthropics/opencode-enchant-starter.git</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="enchant-border rounded-xl p-6 card-hover">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+            <span class="text-lg font-bold text-blue-400">2</span>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold mb-2">复制配置到项目</h4>
+            <div class="font-mono text-sm bg-gray-800/50 rounded-lg p-3 text-gray-300">cp -r opencode-enchant-starter/.opencode ~/.opencode</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="enchant-border rounded-xl p-6 card-hover">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+            <span class="text-lg font-bold text-cyan-400">3</span>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold mb-2">启动 OpenCode</h4>
+            <div class="font-mono text-sm bg-gray-800/50 rounded-lg p-3 text-gray-300">opencode</div>
+            <p class="text-sm text-gray-500 mt-2">附魔自动生效，开始享受 10x 效率提升 ✨</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="py-12 border-t border-gray-800">
+  <div class="container mx-auto px-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">✨</span>
+        <span class="font-bold text-lg">OpenCode <span class="text-purple-400">Enchant</span></span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="https://github.com/anthropics/opencode" target="_blank" class="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
+          <i data-lucide="github" class="w-5 h-5"></i>OpenCode
+        </a>
+        <a href="https://github.com/anthropics/opencode-enchant-starter" target="_blank" class="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>Enchant Starter
+        </a>
+      </div>
+      <p class="text-gray-500 text-sm">Made with 💜 for developers</p>
+    </div>
+  </div>
+</footer>
+
+</div>
+<script>
+  createApp({ mounted() { lucide.createIcons() } }).mount('#app')
+</script>
+</body>
+</html>

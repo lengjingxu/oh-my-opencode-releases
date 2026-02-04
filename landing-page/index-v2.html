@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oh-My-OpenCode - 让 AI 编程真正好用</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(56, 189, 248, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Liquid Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+                0 10px 10px -5px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-gradient-purple {
+            background: linear-gradient(135deg, #c084fc 0%, #e879f9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Section Headers */
+        .section-header {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 3rem;
+        }
+        
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, #c084fc);
+            border-radius: 2px;
+        }
+
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen flex flex-col">
+        
+        <!-- Navbar -->
+        <nav class="fixed w-full z-50 glass-card border-t-0 border-x-0 rounded-none px-6 py-4">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="terminal" class="text-sky-400"></i>
+                    <span class="font-bold text-xl tracking-tight">Oh-My-OpenCode</span>
+                </div>
+                <div class="hidden md:flex gap-8 text-sm font-medium text-slate-300">
+                    <a href="#problems" class="hover:text-white transition-colors">痛点</a>
+                    <a href="#solution" class="hover:text-white transition-colors">方案</a>
+                    <a href="#efficiency" class="hover:text-white transition-colors">效率</a>
+                    <a href="#quality" class="hover:text-white transition-colors">质量</a>
+                    <a href="#capabilities" class="hover:text-white transition-colors">能力</a>
+                </div>
+                <a href="https://github.com/Start-AI-Code/Oh-My-OpenCode" target="_blank" class="btn btn-sm btn-primary bg-gradient-to-r from-sky-500 to-indigo-500 border-none text-white shadow-lg shadow-indigo-500/20">
+                    <i data-lucide="github" class="w-4 h-4"></i> GitHub
+                </a>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="pt-32 pb-20 px-6 relative overflow-hidden">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] -z-10"></div>
+            
+            <div class="max-w-5xl mx-auto text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-xs font-mono text-sky-300 mb-8 fade-in-up">
+                    <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+                    v2.0 Now Available
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight fade-in-up delay-100">
+                    不是更聪明的 AI，<br>
+                    而是 <span class="text-gradient">更聪明的使用方式</span>
+                </h1>
+                
+                <p class="text-xl text-slate-400 mb-10 max-w-3xl mx-auto fade-in-up delay-200 leading-relaxed">
+                    通过多 Agent 协作、智能强化、预制规则和 Skills 扩展，<br>让 AI 编程从 "能用" 变成 "好用"。
+                </p>
+                
+                <div class="flex flex-wrap justify-center gap-8 mb-12 fade-in-up delay-300">
+                    <div class="flex flex-col items-center">
+                        <span class="text-3xl font-bold text-white">10x</span>
+                        <span class="text-sm text-slate-500">效率提升</span>
+                    </div>
+                    <div class="w-px h-12 bg-slate-800"></div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-3xl font-bold text-white">50%</span>
+                        <span class="text-sm text-slate-500">成本降低</span>
+                    </div>
+                    <div class="w-px h-12 bg-slate-800"></div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-3xl font-bold text-white">Pro</span>
+                        <span class="text-sm text-slate-500">质量专业级</span>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center gap-4 fade-in-up delay-300">
+                    <a href="#solution" class="btn btn-lg bg-white text-slate-900 hover:bg-slate-100 border-none px-8">
+                        了解方案
+                    </a>
+                    <a href="https://github.com/Start-AI-Code/Oh-My-OpenCode" target="_blank" class="btn btn-lg glass-card text-white hover:bg-white/10 px-8">
+                        <i data-lucide="github" class="w-5 h-5 mr-2"></i> GitHub
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Problems Section -->
+        <section id="problems" class="py-20 px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold section-header">当前 AI 编程的三大困境</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div v-for="(problem, index) in problems" :key="index" class="glass-card p-8 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <i :data-lucide="problem.icon" class="w-24 h-24"></i>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center mb-6 border border-slate-700">
+                            <span class="text-2xl">{{ problem.emoji }}</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 text-white">{{ problem.title }}</h3>
+                        <p class="text-slate-400 leading-relaxed">{{ problem.desc }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solution Overview -->
+        <section id="solution" class="py-20 px-6 bg-slate-900/50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Oh-My-OpenCode 的解决方案</h2>
+                    <p class="text-slate-400 text-lg">四大支柱，系统性解决效率、质量、能力问题</p>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div v-for="(pillar, index) in pillars" :key="index" class="glass-card p-6 rounded-2xl hover:bg-white/5 transition-colors">
+                        <div class="mb-4 text-sky-400">
+                            <i :data-lucide="pillar.icon" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">{{ pillar.title }}</h3>
+                        <p class="text-sm text-slate-400">{{ pillar.desc }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Efficiency Section -->
+        <section id="efficiency" class="py-20 px-6 relative">
+            <div class="absolute top-1/2 right-0 -translate-y-1/2 w-[600px] h-[600px] bg-sky-500/5 rounded-full blur-[100px] -z-10"></div>
+            
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold section-header">效率提升：让 AI 自主完成工作</h2>
+                </div>
+
+                <!-- Agents Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <div v-for="agent in agents" :key="agent.name" class="glass-card p-6 rounded-2xl border-l-4 border-l-sky-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="font-bold text-lg text-white">{{ agent.name }}</h3>
+                            <span class="text-xs font-mono bg-slate-800 px-2 py-1 rounded text-sky-300">{{ agent.role }}</span>
+                        </div>
+                        <p class="text-sm text-slate-400">{{ agent.desc }}</p>
+                    </div>
+                </div>
+
+                <!-- Mechanisms -->
+                <div class="glass-card p-8 rounded-3xl mb-12">
+                    <h3 class="text-xl font-bold mb-8 flex items-center gap-2">
+                        <i data-lucide="zap" class="text-yellow-400"></i>
+                        智能强化机制
+                    </h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div v-for="mech in mechanisms" :key="mech.title" class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 text-center hover:border-sky-500/30 transition-colors">
+                            <div class="text-2xl mb-2">{{ mech.emoji }}</div>
+                            <div class="font-bold text-sm text-white mb-1">{{ mech.title }}</div>
+                            <div class="text-xs text-slate-500">{{ mech.desc }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auto Correction -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="glass-card p-8 rounded-3xl">
+                        <h3 class="text-xl font-bold mb-6">自动纠错与恢复</h3>
+                        <ul class="space-y-4">
+                            <li v-for="item in autoCorrection" :key="item.trigger" class="flex items-start gap-3">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0"></i>
+                                <div>
+                                    <span class="text-slate-300 font-medium">{{ item.trigger }}</span>
+                                    <span class="text-slate-500 mx-2">→</span>
+                                    <span class="text-sky-300">{{ item.action }}</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="glass-card p-8 rounded-3xl flex items-center justify-center bg-gradient-to-br from-slate-800/50 to-slate-900/50">
+                        <div class="text-center">
+                            <div class="text-6xl font-bold text-white mb-2">99.9%</div>
+                            <div class="text-slate-400">任务自主完成率</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quality Section -->
+        <section id="quality" class="py-20 px-6 bg-slate-900/50">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold section-header">质量保障：从 "能用" 到 "专业"</h2>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-12">
+                    <!-- Category Prompts -->
+                    <div>
+                        <h3 class="text-xl font-bold mb-6 text-white">Category 专业提示词注入</h3>
+                        <div class="overflow-x-auto rounded-2xl border border-slate-800">
+                            <table class="table w-full bg-slate-900/50">
+                                <thead>
+                                    <tr class="border-b border-slate-800 text-slate-400">
+                                        <th>Category</th>
+                                        <th>注入的专业知识</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="cat in categories" :key="cat.name" class="border-b border-slate-800/50 hover:bg-white/5">
+                                        <td class="font-mono text-sky-400">{{ cat.name }}</td>
+                                        <td class="text-slate-300">{{ cat.knowledge }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- UI/UX Intelligence -->
+                    <div>
+                        <h3 class="text-xl font-bold mb-6 text-white">UI/UX 设计智能</h3>
+                        <div class="glass-card p-6 rounded-2xl mb-6">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="badge badge-primary badge-outline">Layer 1</div>
+                                <span class="text-sm text-slate-400">Skill 关键词触发</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4 text-slate-600"></i>
+                                <div class="badge badge-secondary badge-outline">Layer 2</div>
+                                <span class="text-sm text-slate-400">Category 智能路由</span>
+                            </div>
+                            <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                                <div class="text-xs text-slate-500 mb-2">设计规则强制执行示例：</div>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-green-500/10 text-green-400 rounded text-xs border border-green-500/20">✅ 对比度 4.5:1</span>
+                                    <span class="px-2 py-1 bg-green-500/10 text-green-400 rounded text-xs border border-green-500/20">✅ cursor-pointer</span>
+                                    <span class="px-2 py-1 bg-green-500/10 text-green-400 rounded text-xs border border-green-500/20">✅ SVG Icons</span>
+                                    <span class="px-2 py-1 bg-red-500/10 text-red-400 rounded text-xs border border-red-500/20">🚫 避免紫粉渐变</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-4 text-center">
+                            <div class="glass-card p-3 rounded-xl">
+                                <div class="text-xl font-bold text-white">67</div>
+                                <div class="text-xs text-slate-500">风格</div>
+                            </div>
+                            <div class="glass-card p-3 rounded-xl">
+                                <div class="text-xl font-bold text-white">96</div>
+                                <div class="text-xs text-slate-500">配色</div>
+                            </div>
+                            <div class="glass-card p-3 rounded-xl">
+                                <div class="text-xl font-bold text-white">57</div>
+                                <div class="text-xs text-slate-500">字体</div>
+                            </div>
+                            <div class="glass-card p-3 rounded-xl">
+                                <div class="text-xl font-bold text-white">24</div>
+                                <div class="text-xs text-slate-500">布局</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Capabilities Section -->
+        <section id="capabilities" class="py-20 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">能力扩展：让 AI 从 "说" 到 "做"</h2>
+                    <p class="text-slate-400 text-lg">10+ 预制 Skills，覆盖全链路</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                    <!-- Creative -->
+                    <div class="glass-card p-6 rounded-2xl border-t-4 border-t-pink-500">
+                        <div class="mb-4 text-pink-400"><i data-lucide="palette" class="w-8 h-8"></i></div>
+                        <h3 class="text-lg font-bold text-white mb-4">创意生成</h3>
+                        <ul class="space-y-2 text-sm text-slate-400">
+                            <li class="flex items-center gap-2"><i data-lucide="image" class="w-4 h-4"></i> image-generator</li>
+                            <li class="flex items-center gap-2"><i data-lucide="pen-tool" class="w-4 h-4"></i> canvas-design</li>
+                        </ul>
+                    </div>
+
+                    <!-- Data -->
+                    <div class="glass-card p-6 rounded-2xl border-t-4 border-t-blue-500">
+                        <div class="mb-4 text-blue-400"><i data-lucide="database" class="w-8 h-8"></i></div>
+                        <h3 class="text-lg font-bold text-white mb-4">数据能力</h3>
+                        <ul class="space-y-2 text-sm text-slate-400">
+                            <li class="flex items-center gap-2"><i data-lucide="search" class="w-4 h-4"></i> sql-query</li>
+                            <li class="flex items-center gap-2"><i data-lucide="bar-chart" class="w-4 h-4"></i> data-storytelling</li>
+                        </ul>
+                    </div>
+
+                    <!-- Deploy -->
+                    <div class="glass-card p-6 rounded-2xl border-t-4 border-t-green-500">
+                        <div class="mb-4 text-green-400"><i data-lucide="rocket" class="w-8 h-8"></i></div>
+                        <h3 class="text-lg font-bold text-white mb-4">自动部署</h3>
+                        <ul class="space-y-2 text-sm text-slate-400">
+                            <li class="flex items-center gap-2"><i data-lucide="cloud" class="w-4 h-4"></i> deploy-fc (Serverless)</li>
+                            <li class="flex items-center gap-2"><i data-lucide="box" class="w-4 h-4"></i> deploy-docker</li>
+                            <li class="flex items-center gap-2"><i data-lucide="server" class="w-4 h-4"></i> deploy-ecs</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dev -->
+                    <div class="glass-card p-6 rounded-2xl border-t-4 border-t-purple-500">
+                        <div class="mb-4 text-purple-400"><i data-lucide="wrench" class="w-8 h-8"></i></div>
+                        <h3 class="text-lg font-bold text-white mb-4">开发辅助</h3>
+                        <ul class="space-y-2 text-sm text-slate-400">
+                            <li class="flex items-center gap-2"><i data-lucide="test-tube" class="w-4 h-4"></i> test-runner</li>
+                            <li class="flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> log-standard</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Workflow -->
+                <div class="glass-card p-8 rounded-3xl text-center overflow-x-auto">
+                    <div class="inline-flex items-center gap-4 text-sm font-mono text-slate-400 min-w-max">
+                        <span class="px-3 py-1 bg-slate-800 rounded text-pink-400">设计</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        <span class="px-3 py-1 bg-slate-800 rounded text-pink-400">图片</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        <span class="px-3 py-1 bg-slate-800 rounded text-purple-400">开发</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        <span class="px-3 py-1 bg-slate-800 rounded text-blue-400">数据</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        <span class="px-3 py-1 bg-slate-800 rounded text-purple-400">测试</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        <span class="px-3 py-1 bg-slate-800 rounded text-green-400">部署</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        <span class="px-3 py-1 bg-slate-800 rounded text-slate-300">通知</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cost Section -->
+        <section class="py-20 px-6 bg-slate-900/50">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold section-header">智能路由 = 成本优化</h2>
+                </div>
+
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <table class="table w-full">
+                        <thead class="bg-slate-900/80 text-white">
+                            <tr>
+                                <th class="py-4 pl-8">任务</th>
+                                <th>传统方式</th>
+                                <th>Oh-My-OpenCode</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-slate-800/50">
+                                <td class="pl-8 font-medium text-slate-300">改 typo</td>
+                                <td class="text-slate-500">Opus $0.015</td>
+                                <td class="text-green-400 font-bold">Haiku $0.00025</td>
+                            </tr>
+                            <tr class="border-b border-slate-800/50">
+                                <td class="pl-8 font-medium text-slate-300">写组件</td>
+                                <td class="text-slate-500">Opus $0.015</td>
+                                <td class="text-green-400 font-bold">Gemini $0.002</td>
+                            </tr>
+                            <tr class="border-b border-slate-800/50">
+                                <td class="pl-8 font-medium text-slate-300">架构设计</td>
+                                <td class="text-slate-500">Opus $0.015</td>
+                                <td class="text-sky-400 font-bold">GPT-4 $0.01</td>
+                            </tr>
+                            <tr class="bg-white/5">
+                                <td class="pl-8 font-bold text-white">100次调用</td>
+                                <td class="text-slate-400">$1.50</td>
+                                <td class="text-green-400 font-bold text-lg">$0.32 <span class="text-xs font-normal text-green-500/70 ml-2">(节省 78%)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Start -->
+        <section class="py-20 px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-12">三步开始</h2>
+                
+                <div class="grid md:grid-cols-3 gap-8 relative">
+                    <!-- Connector Line -->
+                    <div class="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-slate-700 to-transparent -z-10"></div>
+
+                    <div v-for="(step, index) in steps" :key="index" class="relative">
+                        <div class="w-24 h-24 mx-auto glass-card rounded-full flex items-center justify-center mb-6 text-3xl font-bold text-sky-400 border-2 border-slate-800 bg-slate-900">
+                            {{ index + 1 }}
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">{{ step.title }}</h3>
+                        <p class="text-slate-400 text-sm">{{ step.desc }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-16">
+                    <a href="https://github.com/Start-AI-Code/Oh-My-OpenCode" target="_blank" class="btn btn-lg btn-primary bg-gradient-to-r from-sky-500 to-indigo-500 border-none text-white shadow-lg shadow-indigo-500/20 px-12 rounded-full">
+                        立即开始
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-12 px-6 border-t border-slate-800/50 text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <i data-lucide="terminal" class="text-slate-600"></i>
+                <span class="font-bold text-slate-500">Oh-My-OpenCode</span>
+            </div>
+            <p class="text-slate-600 text-sm mb-6">基于 oh-my-opencode 核心理念构建</p>
+            <div class="flex justify-center gap-6">
+                <a href="https://github.com/Start-AI-Code/Oh-My-OpenCode" class="text-slate-500 hover:text-white transition-colors">
+                    <i data-lucide="github" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                const problems = ref([
+                    { title: '效率低', desc: 'AI 经常忘记任务、中途放弃、需要反复提醒、子代理不配合', icon: 'clock', emoji: '😤' },
+                    { title: '质量差', desc: '输出千篇一律、不懂技术栈规范、UI 有明显 AI 味、不专业', icon: 'alert-triangle', emoji: '😕' },
+                    { title: '能力弱', desc: 'AI 只能告诉你怎么做，不能帮你执行（部署、查数据、生成图片）', icon: 'battery-low', emoji: '🤷' }
+                ]);
+
+                const pillars = ref([
+                    { title: '多 Agent 协作', desc: '专业分工，8 个角色各司其职', icon: 'users' },
+                    { title: '智能强化机制', desc: '自动提醒、自动恢复、永不中断', icon: 'cpu' },
+                    { title: '预制规则注入', desc: 'Category 专业提示词 + UI 设计系统', icon: 'ruler' },
+                    { title: 'Skills 能力扩展', desc: '图片生成、数据查询、自动部署', icon: 'zap' }
+                ]);
+
+                const agents = ref([
+                    { name: 'Sisyphus', role: '执行者', desc: '像高级工程师一样工作，负责具体代码实现' },
+                    { name: 'Oracle', role: '架构师', desc: '解决复杂问题，提供高层设计指导' },
+                    { name: 'Librarian', role: '文档专家', desc: '查找最佳实践，管理知识库' },
+                    { name: 'Explore', role: '探索者', desc: '理解代码结构，分析依赖关系' }
+                ]);
+
+                const mechanisms = ref([
+                    { title: '推石头', desc: 'TODO Continuation', emoji: '🪨' },
+                    { title: '委派提醒', desc: '自动检测委派时机', emoji: '🔔' },
+                    { title: '自引用', desc: 'Ralph Loop 持续循环', emoji: '🔄' },
+                    { title: '7段式', desc: '结构化传递信息', emoji: '📋' },
+                    { title: '防中断', desc: '自动恢复上下文', emoji: '🛡️' }
+                ]);
+
+                const autoCorrection = ref([
+                    { trigger: '上下文超限', action: '自动压缩恢复' },
+                    { trigger: '编辑失败', action: '强制 READ 后重试' },
+                    { trigger: '委派失败', action: '检测 9 种错误，注入正确示例' },
+                    { trigger: '子代理提问', action: '直接阻止，强制自主完成' }
+                ]);
+
+                const categories = ref([
+                    { name: 'visual-engineering', knowledge: 'UI/UX 设计原则、响应式、无障碍、Tailwind 最佳实践' },
+                    { name: 'ultrabrain', knowledge: '深度推理、分步思考、边界检查、逻辑验证' },
+                    { name: 'quick', knowledge: '最小改动、快速完成、避免过度设计' },
+                    { name: 'writing', knowledge: '文档结构、术语一致性、Markdown 规范' },
+                    { name: 'deep', knowledge: '彻底研究、根因分析、底层原理探索' }
+                ]);
+
+                const steps = ref([
+                    { title: '下载配置工具', desc: '获取最新版本的配置脚本' },
+                    { title: '运行安装向导', desc: '选择技术栈、设计风格、配置 API' },
+                    { title: '开始高效编程', desc: '享受 10x 效率提升的开发体验' }
+                ]);
+
+                onMounted(() => {
+                    lucide.createIcons();
+                });
+
+                return {
+                    problems,
+                    pillars,
+                    agents,
+                    mechanisms,
+                    autoCorrection,
+                    categories,
+                    steps
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
