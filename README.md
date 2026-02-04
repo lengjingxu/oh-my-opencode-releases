@@ -1,153 +1,164 @@
-# Super OpenCode 最佳实践配置包
+# Super OpenCode
 
-开箱即用的 AI 开发团队配置。下载应用，按向导完成配置，即可开始使用。
+> 整合 OpenCode + Oh-My-OpenCode，自动化应用最佳实践的 AI 编程助手配置中心
 
-## 特性
+## 项目定位
 
-- **一键安装** - 自动安装 OpenCode + Super OpenCode + 推荐插件
-- **预配置的 Agent 团队** - 8 个专业 Agent，按任务自动分配最优模型
-- **技术栈适配** - 支持 Vue/React/Angular + Python/Java/Node/Go
-- **质量保障** - 内置测试、日志规范
-- **一键部署** - 支持阿里云 FC、Docker
-- **智能通知** - 任务完成自动通知（飞书/企微/钉钉）
+Super OpenCode 是一个**一站式 AI 编程环境配置工具**，旨在：
+
+1. **整合最佳实践** - 将 OpenCode 和 Oh-My-OpenCode 的强大能力整合到一个易用的桌面应用中
+2. **自动化配置** - 用户无需手动编辑配置文件，通过图形界面即可完成所有设置
+3. **开箱即用** - 下载安装后，按向导完成配置，立即开始 AI 辅助编程
+
+## 核心理念
+
+### 🧠 多模型协作
+
+不同的任务需要不同的模型能力：
+- **推理型模型** (Claude Opus, o1) - 处理复杂架构设计、疑难 Bug 分析
+- **快速型模型** (Claude Sonnet, GPT-4o) - 日常编码、快速迭代
+- **专项模型** - 代码补全、文档生成等特定任务
+
+Super OpenCode 让你为不同场景配置最合适的模型，实现成本与效果的最优平衡。
+
+### 🤖 多代理分工
+
+基于 Oh-My-OpenCode 的多代理架构：
+- **Sisyphus** - 主代理，负责任务分解和协调
+- **Oracle** - 高智商顾问，处理复杂推理和架构决策
+- **Explore** - 代码库探索专家
+- **Librarian** - 文档和外部资源检索
+- **Prometheus** - 任务规划
+- **Momus** - 方案审查
+
+每个代理专注于自己擅长的领域，协作完成复杂任务。
+
+### 📋 Skill 流程控制
+
+通过 Skill 机制约束 AI 行为：
+- **结构化指令** - 避免 AI 不按要求执行
+- **领域知识注入** - 为特定任务提供专业上下文
+- **可复用流程** - 将最佳实践封装为可复用的 Skill
+
+内置 Skill 包括：
+- `ui-ux-pro-max` - UI/UX 设计智能
+- `git-master` - Git 操作规范
+- `test-runner` - 测试执行框架
+- `deploy-fc` / `deploy-ecs` / `deploy-docker` - 部署能力
+
+### 🛠️ AI 自主能力扩展
+
+为 AI 提供更多自主完成工作的能力：
+
+| 能力 | 说明 |
+|------|------|
+| **图片素材生成** | 通过 Stable Diffusion API 生成项目所需图片 |
+| **SQL 查询** | 直接连接数据库执行查询，理解数据结构 |
+| **服务器部署** | 自动部署到阿里云函数计算、ECS、Docker |
+| **通知推送** | 任务完成后通过飞书/企业微信/钉钉通知 |
+
+## 解决的问题
+
+### 🌐 中国网络环境适配
+
+OpenCode 内置的服务商（Anthropic、OpenAI 等）在中国网络环境下需要代理，但 OpenCode 的代理配置存在兼容性问题。
+
+Super OpenCode 解决方案：
+- 支持配置国内可直连的 API 代理服务
+- 支持 OpenRouter、硅基流动等中转服务
+- 一键配置，无需手动处理代理问题
+
+## 功能特性
+
+### 安装向导
+- 自动检测并安装 OpenCode
+- 自动安装 Oh-My-OpenCode 插件
+- 技术栈选择（前端/后端）
+- API Key 配置
+- 个性化设置
+
+### 配置管理
+- 模型配置 - 为不同代理/场景配置模型
+- Skill 管理 - 启用/配置各种 Skill
+- 全局规范编辑 - 编辑 AGENTS.md
+- 备份还原 - 配置版本管理
+
+### 自动更新
+- 基于 GitHub Releases 的热更新
+- 后台检测新版本
+- 一键下载安装，无需手动下载
 
 ## 快速开始
 
-### 方式一：使用配置应用（推荐）
+### 下载安装
+
+从 [Releases](https://github.com/lengjingxu/oh-my-opencode-releases/releases) 下载最新版本：
+- macOS Intel: `Super-OpenCode-x.x.x.dmg`
+- macOS Apple Silicon: `Super-OpenCode-x.x.x-arm64.dmg`
+
+### 使用流程
+
+```
+打开应用 → 安装 OpenCode → 安装 Oh-My-OpenCode 
+    → 选择技术栈 → 配置 API Key → 完成！
+```
+
+然后在终端使用 `opencode` 命令开始 AI 辅助编程。
+
+## 开发
 
 ```bash
-# 克隆仓库
-git clone https://github.com/xxx/oh-my-opencode-starter.git
-cd oh-my-opencode-starter/config-app
-
-# 安装依赖并启动
+# 安装依赖
 npm install
+
+# 开发模式
 npm start
+
+# 构建
+npm run build:mac
 ```
 
-打开应用后，按向导完成配置即可。应用会自动：
-1. 安装 OpenCode
-2. 安装 Super OpenCode
-3. 安装推荐插件
-4. 配置技术栈
-5. 生成配置文件
+## 发布新版本
 
-### 方式二：使用安装脚本
+> **重要**：源代码不公开，GitHub 仓库只存放 README 和 Releases 安装包。
+
+### 发布流程
 
 ```bash
-cd oh-my-opencode-starter
-./install.sh
+# 1. 修改 package.json 中的 version（如 1.0.1 → 1.0.2）
+
+# 2. 构建并发布到 GitHub Releases
+GH_TOKEN=$(gh auth token) npm run publish:mac
 ```
 
-## 安装完成后
+### 发布产物说明
 
-直接在终端运行：
+发布后 GitHub Releases 会包含以下文件：
 
-```bash
-opencode
-```
-
-## 目录结构
-
-```
-oh-my-opencode-starter/
-├── config-app/                   # 配置应用（Electron）
-│   ├── main.js
-│   ├── package.json
-│   └── src/index.html
-│
-├── install.sh                    # 命令行安装脚本
-├── README.md
-├── DESIGN.md                     # 设计文档
-│
-├── templates/                    # 配置模板
-│   ├── oh-my-opencode.json       # Agent + Category 配置
-│   ├── opencode.json             # 模型提供商配置
-│   ├── credentials.json.template # 凭证模板
-│   └── AGENTS.md.template        # 全局规范模板
-│
-├── tech-stacks/                  # 技术栈模块
-│   ├── frontend/                 # Vue3/React/Angular/Vanilla
-│   └── backend/                  # Python/Java/Node/Go
-│
-├── skills/                       # 预置 Skills
-│   ├── sql-query/                # 数据库查询
-│   ├── test-runner/              # 测试执行
-│   ├── log-standard/             # 日志规范
-│   ├── deploy-fc/                # 阿里云 FC 部署
-│   ├── deploy-docker/            # Docker 部署
-│   ├── notification/             # 通知服务
-│   ├── data-storytelling/        # 数据分析
-│   └── image-generator/          # 图片生成
-│
-└── hooks/
-    └── notify.sh                 # Webhook 通知脚本
-```
-
-## Agent 团队
-
-| Agent | 职责 | 模型 |
-|-------|------|------|
-| Sisyphus | 主编排、决策 | Claude Opus |
-| Oracle | 架构审查、调试 | GPT-5.2 |
-| Prometheus | 任务规划 | Claude Opus |
-| Explore | 代码搜索 | Claude Haiku |
-| Librarian | 文档查找 | Gemini Pro |
-| Multimodal | 图片分析 | Gemini Flash |
-
-## 技术栈支持
-
-### 前端
-- Vue 3 + Tailwind + DaisyUI（液态玻璃风格）
-- React + Next.js + shadcn/ui
-- Angular + Material
-- 纯 HTML/CSS/JS
-
-### 后端
-- Python + FastAPI + SQLAlchemy
-- Java + Spring Boot + MyBatis-Plus
-- Node.js + Express + Prisma
-- Go + Gin + GORM
-
-## 配置文件
-
-安装后，配置文件位于 `~/.config/opencode/`：
-
-| 文件 | 说明 |
+| 文件 | 用途 |
 |------|------|
-| `opencode.json` | 模型提供商配置 |
-| `oh-my-opencode.json` | Agent + Category 配置 |
-| `credentials.json` | 凭证（API Key、数据库等） |
-| `AGENTS.md` | 全局开发规范 |
+| `latest-mac.yml` | **关键** - 客户端热更新检测文件 |
+| `Super-OpenCode-x.x.x.dmg` | macOS Intel 安装包 |
+| `Super-OpenCode-x.x.x-arm64.dmg` | macOS Apple Silicon 安装包 |
+| `Super-OpenCode-x.x.x-mac.zip` | macOS Intel 更新包（热更新下载） |
+| `Super-OpenCode-x.x.x-arm64-mac.zip` | macOS Apple Silicon 更新包 |
+| `*.blockmap` | 增量更新文件，减少下载量 |
 
-## 通知配置
+### 注意事项
 
-支持飞书、企业微信、钉钉 Webhook 通知。
+1. **不要推送源代码** - 仓库只保留 README.md，源代码保存在本地
+2. **确保 latest-mac.yml 上传成功** - 这是热更新的关键文件
+3. **版本号必须递增** - electron-updater 通过版本号判断是否有新版本
+4. **发布后验证** - 运行 `gh release view vX.X.X --repo lengjingxu/oh-my-opencode-releases` 确认文件完整
 
-编辑 `~/.config/opencode/credentials.json`：
+## 致谢
 
-```json
-{
-  "notification": {
-    "webhook": {
-      "enabled": true,
-      "platform": "wecom",
-      "webhook_url": "https://qyapi.weixin.qq.com/..."
-    }
-  }
-}
-```
+本项目基于以下优秀开源项目构建：
 
-## 常见问题
+- **[OpenCode](https://github.com/opencode-ai/opencode)** - 强大的 AI 编程助手核心
+- **[Oh-My-OpenCode](https://github.com/pinkpixel-dev/oh-my-opencode)** - 多代理协作框架
 
-### Q: 如何更换技术栈？
-打开配置应用，在"提示词配置"中修改，或手动编辑 `~/.config/opencode/oh-my-opencode.json`
-
-### Q: 如何添加自定义 Skill？
-在 `~/.config/opencode/skills/` 目录下创建新的 Skill 文件夹
-
-### Q: 如何修改 AI 称呼？
-打开配置应用，在"全局规范"中修改，或编辑 `~/.config/opencode/AGENTS.md`
+感谢这些项目的作者和贡献者们，是他们的工作让 AI 辅助编程变得更加强大和易用。
 
 ## License
 
