@@ -446,17 +446,37 @@
             font-size: 12px;
         }
 
+        /* User Center Tabs */
+        .uc-tab {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .uc-tab:hover {
+            color: var(--text-primary);
+        }
+        .uc-tab.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--accent);
+        }
+
         /* Selectable Card */
         .card.selectable {
             cursor: pointer;
         }
         .card.selectable:hover {
-            border-color: var(--primary);
+            border-color: var(--text-secondary);
         }
         .card.selectable.selected {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 1px var(--primary);
-            background: rgba(59, 130, 246, 0.05);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent);
+            background: var(--bg);
         }
 
         /* Form */
@@ -935,7 +955,7 @@
                         <div class="mb-6">
                             <p class="form-label" style="margin-bottom: 12px;">通知场景</p>
                             <div class="checkbox-wrapper mb-2">
-                                <input type="checkbox" id="notify-permission" class="checkbox" checked>
+                                <input type="checkbox" id="notify-permission" class="checkbox">
                                 <label for="notify-permission">需要用户确认时通知（推荐）</label>
                             </div>
                             <div class="checkbox-wrapper mb-2">
@@ -1078,7 +1098,7 @@
                             </div>
                             
                             <div class="model-tabs" style="display: flex; gap: 0; margin-bottom: 16px; border-bottom: 1px solid var(--border);">
-                                <button id="model-tab-agents" class="model-tab active" onclick="switchModelTab('agents')" style="padding: 10px 24px; background: none; border: none; border-bottom: 2px solid var(--primary); color: var(--primary); font-weight: 500; cursor: pointer;">角色</button>
+                                <button id="model-tab-agents" class="model-tab active" onclick="switchModelTab('agents')" style="padding: 10px 24px; background: none; border: none; border-bottom: 2px solid var(--accent); color: var(--text-primary); font-weight: 500; cursor: pointer;">角色</button>
                                 <button id="model-tab-categories" class="model-tab" onclick="switchModelTab('categories')" style="padding: 10px 24px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-muted); font-weight: 500; cursor: pointer;">工作类型</button>
                             </div>
                             
@@ -1125,14 +1145,6 @@
                         
                         <div id="uc-not-logged-in">
                             <div class="section" style="max-width: 400px; margin: 0 auto;">
-                                <div id="uc-auth-header" style="text-align: center; margin-bottom: var(--space-6);">
-                                    <div id="uc-welcome-back" class="hidden" style="margin-bottom: var(--space-4);">
-                                        <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-3); font-size: 24px; font-weight: 600; color: var(--text-secondary);" id="uc-avatar"></div>
-                                        <div style="font-size: 16px; font-weight: 500;" id="uc-welcome-name"></div>
-                                        <div style="font-size: 12px; color: var(--text-muted);">欢迎回来</div>
-                                    </div>
-                                </div>
-                                
                                 <div id="uc-auth-form">
                                     <div id="uc-form-register">
                                         <div class="form-group">
@@ -1149,7 +1161,7 @@
                                         </div>
                                         <button class="btn btn-primary" onclick="doRegister()" style="width: 100%; margin-bottom: var(--space-4);">注册</button>
                                         <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
-                                            已有账号？<a href="javascript:void(0)" onclick="switchToLogin()" style="color: var(--primary); text-decoration: none;">立即登录</a>
+                                            已有账号？<a href="javascript:void(0)" onclick="switchToLogin()" style="color: var(--text-primary); text-decoration: underline;">立即登录</a>
                                         </div>
                                     </div>
                                     
@@ -1164,8 +1176,8 @@
                                         </div>
                                         <button class="btn btn-primary" onclick="doLogin()" style="width: 100%; margin-bottom: var(--space-4);">登录</button>
                                         <div style="text-align: center; font-size: 13px; color: var(--text-muted);">
-                                            <span id="uc-switch-account-link">没有账号？<a href="javascript:void(0)" onclick="switchToRegister()" style="color: var(--primary); text-decoration: none;">立即注册</a></span>
-                                            <span id="uc-use-other-link" class="hidden"><a href="javascript:void(0)" onclick="switchToRegister()" style="color: var(--primary); text-decoration: none;">使用其他账号</a></span>
+                                            <span id="uc-switch-account-link">没有账号？<a href="javascript:void(0)" onclick="switchToRegister()" style="color: var(--text-primary); text-decoration: underline;">立即注册</a></span>
+                                            <span id="uc-use-other-link" class="hidden"><a href="javascript:void(0)" onclick="switchToRegister()" style="color: var(--text-primary); text-decoration: underline;">使用其他账号</a></span>
                                         </div>
                                     </div>
                                 </div>
@@ -1183,124 +1195,152 @@
                         </div>
                         
                         <div id="uc-logged-in" class="hidden">
-                            <div class="section" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-3) 0; margin-bottom: var(--space-4);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
                                 <div>
                                     <span style="color: var(--text-muted);">当前账号：</span>
                                     <span id="uc-username" style="font-weight: var(--font-medium);"></span>
                                 </div>
-                                <div style="display: flex; gap: var(--space-3);">
-                                    <a href="http://8.153.201.122:3000" target="_blank" class="btn btn-ghost btn-sm">管理后台 →</a>
-                                    <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="color: var(--danger);">退出登录</button>
+                                <div style="display: flex; gap: var(--space-2);">
+                                    <a href="http://8.153.201.122:3000" target="_blank" class="btn btn-ghost btn-sm">管理后台</a>
+                                    <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="color: var(--danger);">退出</button>
                                 </div>
                             </div>
                             
-                            <div class="grid-4 mb-6">
-                                <div class="card" style="padding: var(--space-4); text-align: center; cursor: default;">
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--space-2);">账户余额</div>
-                                    <div id="uc-balance" style="font-size: 24px; font-weight: var(--font-bold); color: var(--primary);">¥0.00</div>
-                                </div>
-                                <div class="card" style="padding: var(--space-4); text-align: center; cursor: default;">
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--space-2);">已用额度</div>
-                                    <div id="uc-used-quota" style="font-size: 24px; font-weight: var(--font-bold); color: var(--accent);">¥0.00</div>
-                                </div>
-                                <div class="card" style="padding: var(--space-4); text-align: center; cursor: default;">
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--space-2);">调用次数</div>
-                                    <div id="uc-total-requests" style="font-size: 24px; font-weight: var(--font-bold); color: var(--success);">0</div>
-                                </div>
-                                <div class="card" style="padding: var(--space-4); text-align: center; cursor: default;">
-                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--space-2);">邀请人数</div>
-                                    <div id="uc-aff-count" style="font-size: 24px; font-weight: var(--font-bold); color: var(--warning);">0</div>
-                                </div>
-                            </div>
-                            
-                            <div class="grid-2 mb-6">
-                                <div class="section" style="margin: 0;">
-                                    <h3 class="section-title">兑换码充值</h3>
-                                    <div style="display: flex; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3);">
-                                        <input type="text" class="input" id="redeem-code-input" placeholder="请输入兑换码" style="flex: 1;">
-                                        <button class="btn btn-primary" onclick="redeemCode()">兑换</button>
+                            <div style="display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: var(--space-4);">
+                                <div style="flex: 1; display: flex; gap: var(--space-6);">
+                                    <div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">余额</div>
+                                        <div id="uc-balance" style="font-size: 20px; font-weight: 600; color: var(--text-primary);">¥0.00</div>
                                     </div>
-                                    <a href="http://8.153.201.122:3000/topup" target="_blank" class="btn btn-secondary" style="width: 100%;">在线充值 →</a>
+                                    <div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">已用</div>
+                                        <div id="uc-used-quota" style="font-size: 20px; font-weight: 600; color: var(--accent);">¥0.00</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">调用</div>
+                                        <div id="uc-total-requests" style="font-size: 20px; font-weight: 600; color: var(--success);">0</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: var(--space-2);">
+                                    <button class="btn btn-secondary btn-sm" onclick="showBuyModal()">购买</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="showRedeemModal()">兑换</button>
+                                    <button class="btn btn-ghost btn-sm" onclick="showInviteModal()">邀请 <span id="uc-aff-count" style="color: var(--warning);">0</span></button>
+                                </div>
+                            </div>
+                            
+                            <div style="border-bottom: 1px solid var(--border); margin-bottom: var(--space-4);">
+                                <div style="display: flex; gap: var(--space-1);">
+                                    <button class="uc-tab active" onclick="switchUcTab('overview')" id="uc-tab-overview">概览</button>
+                                    <button class="uc-tab" onclick="switchUcTab('plan')" id="uc-tab-plan">套餐</button>
+                                    <button class="uc-tab" onclick="switchUcTab('keys')" id="uc-tab-keys">密钥</button>
+                                </div>
+                            </div>
+                            
+                            <div id="uc-panel-overview">
+                                <div class="section">
+                                    <h3 class="section-title">用量趋势</h3>
+                                    <div id="usage-chart" style="height: 160px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4); position: relative;">
+                                        <div id="usage-chart-bars" style="display: flex; align-items: flex-end; justify-content: space-around; height: 100px;"></div>
+                                        <div id="usage-chart-labels" style="display: flex; justify-content: space-around; margin-top: var(--space-2); font-size: 11px; color: var(--text-muted);"></div>
+                                        <div id="usage-chart-empty" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted);">暂无用量数据</div>
+                                    </div>
                                 </div>
                                 
-                                <div class="section" style="margin: 0;">
-                                    <h3 class="section-title">邀请推广</h3>
-                                    <div class="form-group" style="margin-bottom: var(--space-3);">
-                                        <label class="form-label" style="font-size: 12px;">我的邀请码</label>
-                                        <div style="display: flex; gap: var(--space-2);">
-                                            <input type="text" class="input" id="uc-aff-code" readonly style="flex: 1; font-family: monospace;">
-                                            <button class="btn btn-ghost btn-sm" onclick="copyAffCode()">复制</button>
+                                <div class="section">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3);">
+                                        <h3 class="section-title" style="margin: 0; border: none; padding: 0;">消费记录</h3>
+                                        <button class="btn btn-ghost btn-sm" onclick="refreshLogs()">刷新</button>
+                                    </div>
+                                    <table class="table">
+                                        <thead>
+                                            <tr><th>时间</th><th>模型</th><th>Token</th><th>消耗</th></tr>
+                                        </thead>
+                                        <tbody id="uc-logs-body">
+                                            <tr><td colspan="4" class="text-muted" style="text-align: center; padding: var(--space-6);">暂无消费记录</td></tr>
+                                        </tbody>
+                                    </table>
+                                    <div id="uc-logs-pagination" style="display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-4);"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="uc-panel-plan" class="hidden">
+                                <div class="section">
+                                    <h3 class="section-title">选择套餐</h3>
+                                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: var(--space-4);">选择适合您的套餐，享受不同级别的模型服务</p>
+                                    <div class="grid-3" id="uc-plan-options">
+                                        <div class="card selectable" onclick="selectPlan('free')" id="plan-free" style="padding: var(--space-5);">
+                                            <div style="font-weight: 600; margin-bottom: var(--space-2);">免费版</div>
+                                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--space-3);">适合轻度使用</div>
+                                            <div style="font-size: 11px; color: var(--text-secondary);">DeepSeek + Gemini Flash</div>
+                                        </div>
+                                        <div class="card selectable" onclick="selectPlan('pro')" id="plan-pro" style="padding: var(--space-5);">
+                                            <div style="font-weight: 600; margin-bottom: var(--space-2);">专业版</div>
+                                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--space-3);">日常开发推荐</div>
+                                            <div style="font-size: 11px; color: var(--text-secondary);">Claude Sonnet + Gemini Pro</div>
+                                        </div>
+                                        <div class="card selectable" onclick="selectPlan('ultimate')" id="plan-ultimate" style="padding: var(--space-5);">
+                                            <div style="font-weight: 600; margin-bottom: var(--space-2);">旗舰版</div>
+                                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--space-3);">复杂项目首选</div>
+                                            <div style="font-size: 11px; color: var(--text-secondary);">Claude Opus + GPT-5</div>
                                         </div>
                                     </div>
-                                    <div style="font-size: 12px; color: var(--text-muted);">
+                                    <div id="uc-config-status" style="margin-top: var(--space-4);"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="uc-panel-keys" class="hidden">
+                                <div class="section">
+                                    <h3 class="section-title">API 密钥管理</h3>
+                                    <div id="uc-tokens-list" style="margin-bottom: var(--space-4);"></div>
+                                    <div style="display: flex; gap: var(--space-3); align-items: center; margin-bottom: var(--space-4);">
+                                        <input type="text" class="input" id="new-token-name" placeholder="密钥名称" style="max-width: 200px;">
+                                        <button class="btn btn-secondary" onclick="createToken()">创建密钥</button>
+                                    </div>
+                                </div>
+                                <div class="section">
+                                    <h3 class="section-title">应用到 OpenCode</h3>
+                                    <div style="display: flex; gap: var(--space-3); align-items: center;">
+                                        <select class="input" id="uc-token-select" style="max-width: 280px;">
+                                            <option value="">-- 选择密钥 --</option>
+                                        </select>
+                                        <button class="btn btn-primary" onclick="applyConfig()">应用配置</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="removeConfig()" style="color: var(--danger);">移除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="uc-modal-overlay" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: center; justify-content: center;" onclick="closeUcModal(event)">
+                            <div id="uc-modal-content" style="background: var(--bg-card); border-radius: var(--radius); padding: var(--space-6); min-width: 320px; max-width: 400px;" onclick="event.stopPropagation()">
+                                <div id="uc-modal-buy" class="hidden">
+                                    <h3 style="margin-bottom: var(--space-4);">购买额度</h3>
+                                    <p style="color: var(--text-muted); font-size: 13px;">该功能暂未开放，敬请期待</p>
+                                    <button class="btn btn-secondary" onclick="closeUcModal()" style="margin-top: var(--space-4);">关闭</button>
+                                </div>
+                                <div id="uc-modal-redeem" class="hidden">
+                                    <h3 style="margin-bottom: var(--space-4);">兑换码</h3>
+                                    <div class="form-group">
+                                        <input type="text" class="input" id="redeem-code-input" placeholder="请输入兑换码">
+                                    </div>
+                                    <div style="display: flex; gap: var(--space-3);">
+                                        <button class="btn btn-primary" onclick="redeemCode()">兑换</button>
+                                        <button class="btn btn-ghost" onclick="closeUcModal()">取消</button>
+                                    </div>
+                                </div>
+                                <div id="uc-modal-invite" class="hidden">
+                                    <h3 style="margin-bottom: var(--space-4);">邀请好友</h3>
+                                    <div class="form-group">
+                                        <label class="form-label">邀请链接</label>
+                                        <div style="display: flex; gap: var(--space-2);">
+                                            <input type="text" class="input" id="uc-invite-link" readonly style="font-size: 12px;">
+                                            <button class="btn btn-primary btn-sm" onclick="copyInviteLink()">复制</button>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: var(--space-4);">
                                         邀请奖励：<span id="uc-aff-quota" style="color: var(--success);">¥0.00</span>
                                     </div>
+                                    <button class="btn btn-ghost" onclick="closeUcModal()">关闭</button>
                                 </div>
-                            </div>
-                            
-                            <div class="section">
-                                <h3 class="section-title">套餐选择</h3>
-                                <div class="grid-3 mb-4" id="uc-plan-options">
-                                    <div class="card selectable" onclick="selectPlan('free')" id="plan-free">
-                                        <div style="font-weight: var(--font-medium); margin-bottom: var(--space-2);">免费版</div>
-                                        <div style="font-size: 12px; color: var(--text-muted);">DeepSeek + Gemini Flash</div>
-                                    </div>
-                                    <div class="card selectable" onclick="selectPlan('pro')" id="plan-pro">
-                                        <div style="font-weight: var(--font-medium); margin-bottom: var(--space-2);">专业版</div>
-                                        <div style="font-size: 12px; color: var(--text-muted);">Claude Sonnet + Gemini Pro</div>
-                                    </div>
-                                    <div class="card selectable" onclick="selectPlan('ultimate')" id="plan-ultimate">
-                                        <div style="font-weight: var(--font-medium); margin-bottom: var(--space-2);">旗舰版</div>
-                                        <div style="font-size: 12px; color: var(--text-muted);">Claude Opus + GPT-5</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="section">
-                                <h3 class="section-title">API Token</h3>
-                                <div id="uc-tokens-list" style="margin-bottom: var(--space-4);"></div>
-                                <div style="display: flex; gap: var(--space-3); align-items: center; margin-bottom: var(--space-4);">
-                                    <input type="text" class="input" id="new-token-name" placeholder="Token 名称" style="max-width: 200px;">
-                                    <button class="btn btn-secondary" onclick="createToken()">创建 Token</button>
-                                </div>
-                                <div style="display: flex; gap: var(--space-3); align-items: center;">
-                                    <select class="input" id="uc-token-select" style="max-width: 250px;">
-                                        <option value="">-- 选择 Token 应用到 OpenCode --</option>
-                                    </select>
-                                    <button class="btn btn-primary" onclick="applyConfig()">应用配置</button>
-                                    <button class="btn btn-ghost btn-sm" onclick="removeConfig()" style="color: var(--danger);">移除</button>
-                                </div>
-                                <div id="uc-config-status" style="margin-top: var(--space-4);"></div>
-                            </div>
-                            
-                            <div class="section">
-                                <h3 class="section-title">用量趋势</h3>
-                                <div id="usage-chart" style="height: 160px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4); position: relative;">
-                                    <div id="usage-chart-bars" style="display: flex; align-items: flex-end; justify-content: space-around; height: 100px;"></div>
-                                    <div id="usage-chart-labels" style="display: flex; justify-content: space-around; margin-top: var(--space-2); font-size: 11px; color: var(--text-muted);"></div>
-                                    <div id="usage-chart-empty" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted);">暂无用量数据</div>
-                                </div>
-                            </div>
-                            
-                            <div class="section">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
-                                    <h3 class="section-title" style="margin: 0;">消费记录</h3>
-                                    <button class="btn btn-ghost btn-sm" onclick="refreshLogs()">刷新</button>
-                                </div>
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>时间</th>
-                                            <th>模型</th>
-                                            <th>Token</th>
-                                            <th>消耗</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="uc-logs-body">
-                                        <tr><td colspan="4" class="text-muted" style="text-align: center; padding: var(--space-6);">暂无消费记录</td></tr>
-                                    </tbody>
-                                </table>
-                                <div id="uc-logs-pagination" style="display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-4);"></div>
                             </div>
                         </div>
                     </div>
@@ -2621,7 +2661,7 @@
                     const config = result.data;
                     document.getElementById('webhook-type').value = config.type || 'feishu';
                     document.getElementById('webhook-url').value = config.url || '';
-                    document.getElementById('notify-permission').checked = config.notify_permission !== false;
+                    document.getElementById('notify-permission').checked = config.notify_permission === true;
                     document.getElementById('notify-idle').checked = config.notify_idle === true;
                     document.getElementById('notify-error').checked = config.notify_error === true;
                     
@@ -3479,10 +3519,10 @@
 
         function switchModelTab(tab) {
             // Update tab buttons
-            document.getElementById('model-tab-agents').style.borderBottomColor = tab === 'agents' ? 'var(--primary)' : 'transparent';
-            document.getElementById('model-tab-agents').style.color = tab === 'agents' ? 'var(--primary)' : 'var(--text-muted)';
-            document.getElementById('model-tab-categories').style.borderBottomColor = tab === 'categories' ? 'var(--primary)' : 'transparent';
-            document.getElementById('model-tab-categories').style.color = tab === 'categories' ? 'var(--primary)' : 'var(--text-muted)';
+            document.getElementById('model-tab-agents').style.borderBottomColor = tab === 'agents' ? 'var(--accent)' : 'transparent';
+            document.getElementById('model-tab-agents').style.color = tab === 'agents' ? 'var(--text-primary)' : 'var(--text-muted)';
+            document.getElementById('model-tab-categories').style.borderBottomColor = tab === 'categories' ? 'var(--accent)' : 'transparent';
+            document.getElementById('model-tab-categories').style.color = tab === 'categories' ? 'var(--text-primary)' : 'var(--text-muted)';
             
             // Update tab content
             document.getElementById('model-tab-content-agents').style.display = tab === 'agents' ? 'block' : 'none';
@@ -3741,6 +3781,12 @@
         };
 
         async function loadUserCenter() {
+            // 如果已经登录，直接显示已登录界面
+            if (ucState.loggedIn && ucState.user) {
+                showLoggedIn();
+                return;
+            }
+            
             try {
                 const configResult = await window.api.hostedGetConfig();
                 if (configResult.success) {
@@ -3774,16 +3820,12 @@
             el('uc-logged-in').classList.add('hidden');
             
             if (ucState.lastUsername) {
-                el('uc-welcome-back').classList.remove('hidden');
-                el('uc-avatar').textContent = ucState.lastUsername.charAt(0).toUpperCase();
-                el('uc-welcome-name').textContent = ucState.lastUsername;
                 el('uc-login-username').value = ucState.lastUsername;
                 el('uc-form-register').classList.add('hidden');
                 el('uc-form-login').classList.remove('hidden');
                 el('uc-switch-account-link').classList.add('hidden');
                 el('uc-use-other-link').classList.remove('hidden');
             } else {
-                el('uc-welcome-back').classList.add('hidden');
                 el('uc-form-register').classList.remove('hidden');
                 el('uc-form-login').classList.add('hidden');
             }
@@ -3794,7 +3836,6 @@
             el('uc-form-login').classList.remove('hidden');
             el('uc-switch-account-link').classList.remove('hidden');
             el('uc-use-other-link').classList.add('hidden');
-            el('uc-welcome-back').classList.add('hidden');
             el('uc-login-username').value = '';
             el('uc-login-password').value = '';
         }
@@ -3802,7 +3843,6 @@
         function switchToRegister() {
             el('uc-form-login').classList.add('hidden');
             el('uc-form-register').classList.remove('hidden');
-            el('uc-welcome-back').classList.add('hidden');
             el('uc-reg-username').value = '';
             el('uc-reg-email').value = '';
             el('uc-reg-password').value = '';
@@ -3817,13 +3857,159 @@
                 el('uc-used-quota').textContent = '¥' + ((ucState.user.used_quota || 0) / 500000).toFixed(2);
                 el('uc-total-requests').textContent = (ucState.user.request_count || 0).toLocaleString();
                 el('uc-aff-count').textContent = (ucState.user.aff_count || 0).toLocaleString();
-                el('uc-aff-code').value = ucState.user.aff_code || '';
                 el('uc-aff-quota').textContent = '¥' + ((ucState.user.aff_quota || 0) / 500000).toFixed(2);
+                
+                // 更新邀请链接
+                var affCode = ucState.user.aff_code || '';
+                el('uc-invite-link').value = affCode ? 'http://8.153.201.122:3000/register?aff=' + affCode : '';
             }
             updatePlanSelection();
             await loadTokens();
             await refreshLogs();
+            await loadUsageChart();
             updateConfigStatus();
+        }
+
+        async function loadUsageChart() {
+            try {
+                // 获取最近7天的数据
+                const now = Math.floor(Date.now() / 1000);
+                const sevenDaysAgo = now - 7 * 24 * 60 * 60;
+                const result = await window.api.hostedGetStatistics(sevenDaysAgo, now);
+                
+                if (result.success && result.data && result.data.data) {
+                    renderUsageChart(result.data.data);
+                } else {
+                    showEmptyChart();
+                }
+            } catch (e) {
+                console.error('Failed to load usage chart:', e);
+                showEmptyChart();
+            }
+        }
+
+        function renderUsageChart(data) {
+            const barsContainer = el('usage-chart-bars');
+            const labelsContainer = el('usage-chart-labels');
+            const emptyEl = el('usage-chart-empty');
+            
+            if (!data || data.length === 0) {
+                showEmptyChart();
+                return;
+            }
+            
+            emptyEl.style.display = 'none';
+            
+            // 按日期分组统计
+            const dailyData = {};
+            const today = new Date();
+            
+            // 初始化最近7天
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const key = date.toISOString().split('T')[0];
+                dailyData[key] = 0;
+            }
+            
+            // 累加数据
+            data.forEach(item => {
+                if (item.created_at) {
+                    const date = new Date(item.created_at * 1000).toISOString().split('T')[0];
+                    if (dailyData.hasOwnProperty(date)) {
+                        dailyData[date] += (item.quota || 0);
+                    }
+                }
+            });
+            
+            const values = Object.values(dailyData);
+            const maxValue = Math.max(...values, 1);
+            
+            // 渲染柱状图
+            let barsHtml = '';
+            let labelsHtml = '';
+            
+            Object.entries(dailyData).forEach(([date, value]) => {
+                const height = Math.max((value / maxValue) * 80, 2);
+                const displayValue = (value / 500000).toFixed(2);
+                const dayLabel = date.slice(5).replace('-', '/');
+                
+                barsHtml += '<div style="display: flex; flex-direction: column; align-items: center; flex: 1;">';
+                barsHtml += '<div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">¥' + displayValue + '</div>';
+                barsHtml += '<div style="width: 24px; height: ' + height + 'px; background: var(--accent); border-radius: 2px;"></div>';
+                barsHtml += '</div>';
+                
+                labelsHtml += '<span>' + dayLabel + '</span>';
+            });
+            
+            barsContainer.innerHTML = barsHtml;
+            labelsContainer.innerHTML = labelsHtml;
+        }
+
+        function showEmptyChart() {
+            el('usage-chart-bars').innerHTML = '';
+            el('usage-chart-labels').innerHTML = '';
+            el('usage-chart-empty').style.display = 'block';
+        }
+
+        const HOSTED_TOKEN_NAME = 'superopencode';
+
+        async function ensureHostedToken() {
+            // 检查是否已存在 superopencode 密钥
+            try {
+                const tokensResult = await window.api.hostedGetTokens(1, 50);
+                if (tokensResult.success && tokensResult.data && tokensResult.data.data) {
+                    const tokens = tokensResult.data.data.items || [];
+                    const existingToken = tokens.find(t => t.name === HOSTED_TOKEN_NAME);
+                    
+                    if (existingToken && existingToken.key) {
+                        // 已存在，直接使用
+                        return existingToken.key;
+                    }
+                }
+                
+                // 不存在，创建新密钥
+                const createResult = await window.api.hostedCreateToken(HOSTED_TOKEN_NAME, 500000, false, -1);
+                if (createResult.success && createResult.data && createResult.data.data) {
+                    return createResult.data.data.key;
+                }
+                
+                return null;
+            } catch (e) {
+                console.error('Failed to ensure hosted token:', e);
+                return null;
+            }
+        }
+
+        async function autoConfigureHostedService() {
+            showToast('正在配置托管服务...', 'info');
+            
+            // 1. 确保有 superopencode 密钥
+            const apiKey = await ensureHostedToken();
+            if (!apiKey) {
+                showToast('创建密钥失败', 'error');
+                return false;
+            }
+            
+            // 2. 应用配置到 opencode
+            try {
+                const result = await window.api.hostedApplyConfig(apiKey, ucState.selectedPlan || 'free');
+                if (result.success) {
+                    ucState.config = Object.assign({}, ucState.config, { 
+                        apiKey: apiKey, 
+                        plan: ucState.selectedPlan || 'free', 
+                        enabled: true 
+                    });
+                    showToast('托管服务已自动配置', 'success');
+                    return true;
+                } else {
+                    showToast('配置失败: ' + result.error, 'error');
+                    return false;
+                }
+            } catch (e) {
+                showToast('配置失败: ' + e.message, 'error');
+                return false;
+            }
         }
 
         async function doLogin() {
@@ -3842,6 +4028,10 @@
                     if (userResult.success && userResult.data && userResult.data.data) {
                         ucState.user = userResult.data.data;
                     }
+                    
+                    // 自动配置托管服务
+                    await autoConfigureHostedService();
+                    
                     showLoggedIn();
                 } else { showToast('登录失败: ' + result.error); }
             } catch (e) { showToast('登录失败: ' + e.message); }
@@ -3859,9 +4049,6 @@
                     showToast('注册成功，请登录');
                     ucState.lastUsername = username;
                     localStorage.setItem('uc_last_username', username);
-                    el('uc-welcome-back').classList.remove('hidden');
-                    el('uc-avatar').textContent = username.charAt(0).toUpperCase();
-                    el('uc-welcome-name').textContent = username;
                     el('uc-form-register').classList.add('hidden');
                     el('uc-form-login').classList.remove('hidden');
                     el('uc-login-username').value = username;
@@ -3937,8 +4124,6 @@
         function copyToken(key) {
             navigator.clipboard.writeText(key).then(function() { showToast('已复制'); }).catch(function() { showToast('复制失败'); });
         }
-
-        function selectPlan(plan) { ucState.selectedPlan = plan; updatePlanSelection(); }
 
         function updatePlanSelection() {
             ['free', 'pro', 'ultimate'].forEach(function(p) {
@@ -4040,6 +4225,64 @@
             var code = el('uc-aff-code').value;
             if (!code) { showToast('暂无邀请码'); return; }
             navigator.clipboard.writeText(code).then(function() { showToast('已复制'); }).catch(function() { showToast('复制失败'); });
+        }
+
+        function switchUcTab(tab) {
+            ['overview', 'plan', 'keys'].forEach(function(t) {
+                var tabEl = el('uc-tab-' + t);
+                var panelEl = el('uc-panel-' + t);
+                if (tabEl) tabEl.classList.toggle('active', t === tab);
+                if (panelEl) panelEl.classList.toggle('hidden', t !== tab);
+            });
+            
+            // 切换时加载对应数据
+            if (tab === 'overview') {
+                refreshLogs();
+                loadUsageChart();
+            } else if (tab === 'keys') {
+                loadTokens();
+            }
+        }
+
+        function showBuyModal() {
+            el('uc-modal-overlay').classList.remove('hidden');
+            el('uc-modal-buy').classList.remove('hidden');
+            el('uc-modal-redeem').classList.add('hidden');
+            el('uc-modal-invite').classList.add('hidden');
+        }
+
+        function showRedeemModal() {
+            el('uc-modal-overlay').classList.remove('hidden');
+            el('uc-modal-buy').classList.add('hidden');
+            el('uc-modal-redeem').classList.remove('hidden');
+            el('uc-modal-invite').classList.add('hidden');
+            el('redeem-code-input').value = '';
+        }
+
+        function showInviteModal() {
+            el('uc-modal-overlay').classList.remove('hidden');
+            el('uc-modal-buy').classList.add('hidden');
+            el('uc-modal-redeem').classList.add('hidden');
+            el('uc-modal-invite').classList.remove('hidden');
+            var affCode = ucState.user ? ucState.user.aff_code : '';
+            el('uc-invite-link').value = affCode ? 'http://8.153.201.122:3000/register?aff=' + affCode : '';
+        }
+
+        function closeUcModal(event) {
+            if (event && event.target !== el('uc-modal-overlay')) return;
+            el('uc-modal-overlay').classList.add('hidden');
+        }
+
+        function copyInviteLink() {
+            var link = el('uc-invite-link').value;
+            if (!link) { showToast('暂无邀请链接'); return; }
+            navigator.clipboard.writeText(link).then(function() { showToast('邀请链接已复制'); }).catch(function() { showToast('复制失败'); });
+        }
+
+        function selectPlan(plan) {
+            showToast('套餐功能暂未开放');
+            ucState.selectedPlan = plan;
+            updatePlanSelection();
         }
 
         // Start

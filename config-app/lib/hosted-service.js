@@ -1,8 +1,52 @@
 const https = require('https');
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 const DEFAULT_BASE_URL = 'http://8.153.201.122:3000';
 const DEFAULT_TIMEOUT = 30000;
+
+// Session 持久化路径
+const SESSION_FILE = path.join(os.homedir(), '.config', 'opencode', 'hosted-session.json');
+
+function ensureDir(filePath) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+function loadSession() {
+  try {
+    if (fs.existsSync(SESSION_FILE)) {
+      const data = fs.readFileSync(SESSION_FILE, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (e) {
+    console.error('Failed to load session:', e);
+  }
+  return null;
+}
+
+function saveSession(session) {
+  try {
+    ensureDir(SESSION_FILE);
+    fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2));
+  } catch (e) {
+    console.error('Failed to save session:', e);
+  }
+}
+
+function clearSessionFile() {
+  try {
+    if (fs.existsSync(SESSION_FILE)) {
+      fs.unlinkSync(SESSION_FILE);
+    }
+  } catch (e) {
+    console.error('Failed to clear session:', e);
+  }
+}
 
 class HostedServiceClient {
   constructor(baseUrl = DEFAULT_BASE_URL) {
@@ -10,6 +54,26 @@ class HostedServiceClient {
     this.sessionCookie = null;
     this.accessToken = null;
     this.userId = null;
+    
+    // 启动时加载保存的 session
+    this._loadSavedSession();
+  }
+  
+  _loadSavedSession() {
+    const session = loadSession();
+    if (session) {
+      this.sessionCookie = session.sessionCookie || null;
+      this.userId = session.userId || null;
+      this.accessToken = session.accessToken || null;
+    }
+  }
+  
+  _saveCurrentSession() {
+    saveSession({
+      sessionCookie: this.sessionCookie,
+      userId: this.userId,
+      accessToken: this.accessToken
+    });
   }
 
   setBaseUrl(url) {
@@ -18,20 +82,24 @@ class HostedServiceClient {
 
   setAccessToken(token) {
     this.accessToken = token;
+    this._saveCurrentSession();
   }
 
   setSessionCookie(cookie) {
     this.sessionCookie = cookie;
+    this._saveCurrentSession();
   }
 
   setUserId(id) {
     this.userId = id;
+    this._saveCurrentSession();
   }
 
   clearAuth() {
     this.sessionCookie = null;
     this.accessToken = null;
     this.userId = null;
+    clearSessionFile();
   }
 
   _request(method, path, body = null) {
@@ -72,6 +140,7 @@ class HostedServiceClient {
         const setCookie = res.headers['set-cookie'];
         if (setCookie) {
           this.sessionCookie = setCookie.map(c => c.split(';')[0]).join('; ');
+          this._saveCurrentSession();
         }
 
         res.on('data', chunk => { data += chunk; });
@@ -149,6 +218,7 @@ class HostedServiceClient {
     const result = await this.post('/api/user/login', { username, password });
     if (result.success && result.data && result.data.id) {
       this.userId = result.data.id;
+      this._saveCurrentSession();
     }
     return result;
   }
