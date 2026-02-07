@@ -3,17 +3,34 @@ const path = require('path');
 const { CONFIG_DIR, readJsonFile, writeJsonFile, ensureDir } = require('./config-service');
 
 const HOSTED_CONFIG_PATH = path.join(CONFIG_DIR, 'hosted-service.json');
+const HOSTED_TEMPLATE_PATH = path.join(__dirname, '..', 'templates', 'hosted-service.template.json');
+
+function loadHostedTemplate() {
+  try {
+    if (fs.existsSync(HOSTED_TEMPLATE_PATH)) {
+      return JSON.parse(fs.readFileSync(HOSTED_TEMPLATE_PATH, 'utf-8'));
+    }
+  } catch (e) {
+    console.error('[hosted-config] Failed to load template:', e.message);
+  }
+  return null;
+}
+
+const HOSTED_TEMPLATE = loadHostedTemplate() || {
+  baseUrl: 'http://8.153.201.122:3000',
+  planModels: {}
+};
 
 const DEFAULT_HOSTED_CONFIG = {
   enabled: false,
-  baseUrl: 'http://8.153.201.122:3000',
+  baseUrl: HOSTED_TEMPLATE.baseUrl,
   username: '',
   apiKey: '',
   plan: 'free',
   lastLogin: null
 };
 
-const PLAN_MODELS = {
+const FALLBACK_PLAN_MODELS = HOSTED_TEMPLATE.planModels || {
   free: {
     primary: 'deepseek-chat',
     secondary: 'deepseek-chat',
@@ -72,12 +89,15 @@ function saveHostedConfig(config) {
   return updated;
 }
 
-function getModelsForPlan(plan) {
-  return PLAN_MODELS[plan] || PLAN_MODELS.free;
+function getModelsForPlan(plan, remotePlanModels = null) {
+  if (remotePlanModels && remotePlanModels[plan]) {
+    return remotePlanModels[plan];
+  }
+  return FALLBACK_PLAN_MODELS[plan] || FALLBACK_PLAN_MODELS.free;
 }
 
-function buildAgentModels(plan, providerName = 'hosted') {
-  const models = getModelsForPlan(plan);
+function buildAgentModels(plan, providerName = 'hosted', remotePlanModels = null) {
+  const models = getModelsForPlan(plan, remotePlanModels);
   const agentModels = {};
   
   for (const [agent, modelType] of Object.entries(AGENT_MODEL_MAPPING)) {
@@ -88,8 +108,8 @@ function buildAgentModels(plan, providerName = 'hosted') {
   return agentModels;
 }
 
-function buildCategoryModels(plan, providerName = 'hosted') {
-  const models = getModelsForPlan(plan);
+function buildCategoryModels(plan, providerName = 'hosted', remotePlanModels = null) {
+  const models = getModelsForPlan(plan, remotePlanModels);
   const categoryModels = {};
   
   for (const [category, modelType] of Object.entries(CATEGORY_MODEL_MAPPING)) {
@@ -100,33 +120,58 @@ function buildCategoryModels(plan, providerName = 'hosted') {
   return categoryModels;
 }
 
-function buildHostedProvider(baseUrl, apiKey) {
-  const allModels = new Set();
-  Object.values(PLAN_MODELS).forEach(planModels => {
-    Object.values(planModels).forEach(model => allModels.add(model));
-  });
+function buildHostedProvider(baseUrl, apiKey, modelList = []) {
+  const models = {};
+  if (modelList && modelList.length > 0) {
+    modelList.forEach(m => {
+      const modelId = typeof m === 'string' ? m : m.id;
+      if (modelId) {
+        models[modelId] = { name: modelId };
+      }
+    });
+  } else {
+    Object.values(FALLBACK_PLAN_MODELS).forEach(planModels => {
+      Object.values(planModels).forEach(model => {
+        models[model] = { name: model };
+      });
+    });
+  }
 
   return {
     name: 'Oh-My-OpenCode 托管服务',
-    type: 'openai',
-    baseUrl: baseUrl.replace(/\/$/, '') + '/v1',
-    apiKey: apiKey,
-    models: Object.fromEntries([...allModels].map(m => [m, {}]))
+    npm: '@ai-sdk/openai-compatible',
+    options: {
+      apiKey: apiKey,
+      baseURL: baseUrl.replace(/\/$/, '') + '/v1'
+    },
+    models: models
   };
 }
 
-function applyHostedServiceConfig(opencodeConfig, ohMyConfig, hostedConfig) {
-  const { baseUrl, apiKey, plan, enabled } = hostedConfig;
+function applyHostedServiceConfig(opencodeConfig, ohMyConfig, hostedConfig, remoteConfig = null) {
+  const { apiKey, plan, enabled } = hostedConfig;
+  const baseUrl = remoteConfig?.baseUrl || hostedConfig.baseUrl;
+  const modelList = remoteConfig?.models || [];
+  const planModels = remoteConfig?.planModels || null;
   
   if (!enabled || !apiKey) {
     return { opencodeConfig, ohMyConfig };
   }
 
-  opencodeConfig.providers = opencodeConfig.providers || {};
-  opencodeConfig.providers.hosted = buildHostedProvider(baseUrl, apiKey);
+  if (!baseUrl) {
+    console.error('[hosted-config] No baseUrl available');
+    return { opencodeConfig, ohMyConfig };
+  }
 
-  const agentModels = buildAgentModels(plan, 'hosted');
-  const categoryModels = buildCategoryModels(plan, 'hosted');
+  if (opencodeConfig.providers) {
+    delete opencodeConfig.providers;
+  }
+
+  opencodeConfig.provider = opencodeConfig.provider || {};
+  opencodeConfig.provider.hosted = buildHostedProvider(baseUrl, apiKey, modelList);
+
+  const agentModels = buildAgentModels(plan, 'hosted', planModels);
+  const categoryModels = buildCategoryModels(plan, 'hosted', planModels);
 
   ohMyConfig.agents = ohMyConfig.agents || {};
   for (const [agent, model] of Object.entries(agentModels)) {
@@ -144,8 +189,8 @@ function applyHostedServiceConfig(opencodeConfig, ohMyConfig, hostedConfig) {
 }
 
 function removeHostedServiceConfig(opencodeConfig, ohMyConfig) {
-  if (opencodeConfig.providers?.hosted) {
-    delete opencodeConfig.providers.hosted;
+  if (opencodeConfig.provider?.hosted) {
+    delete opencodeConfig.provider.hosted;
   }
 
   if (ohMyConfig.agents) {
@@ -175,7 +220,7 @@ function isHostedServiceEnabled() {
 module.exports = {
   HOSTED_CONFIG_PATH,
   DEFAULT_HOSTED_CONFIG,
-  PLAN_MODELS,
+  FALLBACK_PLAN_MODELS,
   AGENT_MODEL_MAPPING,
   CATEGORY_MODEL_MAPPING,
   

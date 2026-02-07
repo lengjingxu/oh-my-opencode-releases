@@ -859,6 +859,9 @@
                         <div class="nav-item" onclick="switchTab(5)" id="nav-5">
                             <span class="nav-item-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.48-.56.93-1.23 1.35-2h-4.35z"/><path d="M9.85 14.85l-4.35 4.35"/><path d="M12 2l3 3 7 7-3 3-7-7-3-3z"/></svg></span> 部署配置
                         </div>
+                        <div class="nav-item" onclick="switchTab(12)" id="nav-12">
+                            <span class="nav-item-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2zM4.5 11A5.5 5.5 0 0 0 10 16.5V18H6v2h12v-2h-4v-1.5a5.5 5.5 0 0 0 5.5-5.5H18v-2h-2v2H8v-2H6v2H4.5zM15 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-6 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg></span> 飞书机器人
+                        </div>
                     </div>
                     
                     <div class="nav-group">
@@ -1156,6 +1159,13 @@
                                             <input type="email" class="input" id="uc-reg-email" placeholder="请输入邮箱">
                                         </div>
                                         <div class="form-group">
+                                            <label class="form-label">邮箱验证码</label>
+                                            <div style="display: flex; gap: 8px;">
+                                                <input type="text" class="input" id="uc-reg-code" placeholder="请输入验证码" style="flex: 1;">
+                                                <button class="btn btn-secondary" id="uc-send-code-btn" onclick="sendVerificationCode()" style="white-space: nowrap;">发送验证码</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <label class="form-label">密码</label>
                                             <input type="password" class="input" id="uc-reg-password" placeholder="请输入密码（至少8位）">
                                         </div>
@@ -1210,11 +1220,11 @@
                                 <div style="flex: 1; display: flex; gap: var(--space-6);">
                                     <div>
                                         <div style="font-size: 11px; color: var(--text-muted);">余额</div>
-                                        <div id="uc-balance" style="font-size: 20px; font-weight: 600; color: var(--text-primary);">¥0.00</div>
+                                        <div id="uc-balance" style="font-size: 20px; font-weight: 600; color: var(--text-primary);">$0.00</div>
                                     </div>
                                     <div>
                                         <div style="font-size: 11px; color: var(--text-muted);">已用</div>
-                                        <div id="uc-used-quota" style="font-size: 20px; font-weight: 600; color: var(--accent);">¥0.00</div>
+                                        <div id="uc-used-quota" style="font-size: 20px; font-weight: 600; color: var(--accent);">$0.00</div>
                                     </div>
                                     <div>
                                         <div style="font-size: 11px; color: var(--text-muted);">调用</div>
@@ -1337,10 +1347,82 @@
                                         </div>
                                     </div>
                                     <div style="font-size: 13px; color: var(--text-muted); margin-bottom: var(--space-4);">
-                                        邀请奖励：<span id="uc-aff-quota" style="color: var(--success);">¥0.00</span>
+                                        邀请奖励：<span id="uc-aff-quota" style="color: var(--success);">$0.00</span>
                                     </div>
                                     <button class="btn btn-ghost" onclick="closeUcModal()">关闭</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 12: Feishu Bot -->
+                    <div id="tab-12" class="tab-content hidden">
+                        <div class="page-header">
+                            <h2 class="page-title">飞书机器人</h2>
+                            <p class="page-desc">配置并运行飞书机器人，支持消息接收和交互</p>
+                        </div>
+                        
+                        <div class="section">
+                            <h3 class="section-title">基本配置</h3>
+                            <div class="form-group">
+                                <label class="form-label">App ID</label>
+                                <input type="text" class="input" id="feishu-app-id" placeholder="cli_...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">App Secret</label>
+                                <input type="password" class="input" id="feishu-app-secret" placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">OpenCode 工作目录</label>
+                                <input type="text" class="input" id="feishu-working-dir" placeholder="/Users/leng/Desktop/codepro/opencraft" value="/Users/leng/Desktop/codepro/opencraft">
+                            </div>
+                            <div class="checkbox-wrapper mb-4">
+                                <input type="checkbox" id="feishu-server-mode" class="checkbox" checked>
+                                <label for="feishu-server-mode">使用 Server 模式 (推荐)</label>
+                            </div>
+                            
+                            <details style="margin-bottom: 16px;">
+                                <summary style="cursor: pointer; color: var(--text-secondary); font-size: 13px; margin-bottom: 8px;">高级设置</summary>
+                                <div style="padding-top: 8px;">
+                                    <div class="grid-2">
+                                        <div class="form-group">
+                                            <label class="form-label">Server Host</label>
+                                            <input type="text" class="input" id="feishu-server-host" value="127.0.0.1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Server Port</label>
+                                            <input type="number" class="input" id="feishu-server-port" value="4096">
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+                            
+                            <div class="flex gap-3">
+                                <button class="btn btn-primary" onclick="saveFeishuConfig()">保存配置</button>
+                                <button class="btn btn-secondary" onclick="window.api.openExternal('https://open.feishu.cn/document/home/index')">开发文档</button>
+                            </div>
+                        </div>
+                        
+                        <div class="section">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="section-title" style="margin-bottom: 0; border: none;">运行控制</h3>
+                                <div id="feishu-status-indicator" style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                                    <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);"></div>
+                                    <span class="text-muted">未运行</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-3 mb-4">
+                                <button class="btn btn-primary" id="btn-start-feishu" onclick="startFeishuBot()">
+                                    <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> 启动机器人
+                                </button>
+                                <button class="btn btn-secondary" id="btn-stop-feishu" onclick="stopFeishuBot()" disabled>
+                                    <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 停止机器人
+                                </button>
+                            </div>
+                            
+                            <div class="code-block" id="feishu-log-area" style="height: 300px; overflow-y: auto; display: block; white-space: pre-wrap; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">
+                                <div class="text-muted">等待启动...</div>
                             </div>
                         </div>
                     </div>
@@ -1544,7 +1626,7 @@
                     if (opencode) {
                         if (opencode.provider) {
                             // Populate providers list
-                            state.providers = Object.entries(opencode.provider).map(([name, config]) => {
+                            state.providers = Object.entries(opencode.provider).map(([key, config]) => {
                                 // Infer apiFormat from npm package
                                 let apiFormat = 'openai';
                                 if (config.npm) {
@@ -1552,10 +1634,11 @@
                                     else if (config.npm.includes('google')) apiFormat = 'gemini';
                                 }
                                 return {
-                                    name,
+                                    name: key,  // provider key (用于引用)
+                                    displayName: config.name || '',  // 显示名称
                                     apiFormat,
                                     baseUrl: config.options?.baseURL || '',
-                                    apiKey: '', // Will try to fill from auth
+                                    apiKey: config.options?.apiKey || '', // 从 options 读取 apiKey
                                     npm: config.npm || '',
                                     models: config.models || {}
                                 };
@@ -1851,7 +1934,7 @@
 
         window.switchTab = (index) => {
             state.activeTab = index;
-            for (let i = 0; i <= 11; i++) {
+            for (let i = 0; i <= 12; i++) {
                 const nav = el(`nav-${i}`);
                 const tab = el(`tab-${i}`);
                 if (nav) nav.classList.toggle('active', i === index);
@@ -1883,6 +1966,7 @@
             if (index === 9) loadAgentModels();
             if (index === 10) loadBackupList();
             if (index === 11) loadUserCenter();
+            if (index === 12) loadFeishuConfig();
         };
 
         window.toggleNavGroup = (header) => {
@@ -1912,7 +1996,7 @@
                                     p.apiFormat === 'gemini' ? 'Gemini' : 'OpenAI';
                 return `
                     <tr>
-                        <td style="font-weight: var(--font-medium);">${p.name || '未命名'}</td>
+                        <td style="font-weight: var(--font-medium);">${p.displayName || p.name || '未命名'}<br><small style="color: var(--text-muted); font-weight: normal;">${p.name || ''}</small></td>
                         <td><span class="badge">${formatLabel}</span></td>
                         <td>${modelCount} 个模型</td>
                         <td class="table-actions">
@@ -1928,6 +2012,7 @@
         window.addProvider = () => {
             state.providers.push({ 
                 name: '', 
+                displayName: '',
                 apiFormat: 'openai', 
                 baseUrl: '', 
                 apiKey: '',
@@ -1955,12 +2040,18 @@
             document.getElementById('provider-edit-view').innerHTML = `
                 <div style="display: flex; align-items: center; margin-bottom: 24px;">
                     <button class="btn" onclick="backToProviderList()" style="margin-right: 16px;">← 返回</button>
-                    <h3 style="margin: 0;">编辑服务商: ${p.name || '新服务商'}</h3>
+                    <h3 style="margin: 0;">编辑服务商: ${p.displayName || p.name || '新服务商'}</h3>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">服务商名称</label>
-                    <input type="text" class="input" id="edit-provider-name" value="${p.name || ''}">
+                    <label class="form-label">服务商 ID（唯一标识，用于配置引用）</label>
+                    <input type="text" class="input" id="edit-provider-name" value="${p.name || ''}" placeholder="如: my-proxy">
+                    <p class="form-hint">用于 model 配置中引用，如 my-proxy/gpt-4</p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">显示名称</label>
+                    <input type="text" class="input" id="edit-provider-display-name" value="${p.displayName || ''}" placeholder="如: 我的代理服务">
                 </div>
                 
                 <div class="form-group">
@@ -1990,6 +2081,7 @@
         window.saveProviderEdit = () => {
             const i = state.editingProviderIndex;
             state.providers[i].name = document.getElementById('edit-provider-name').value;
+            state.providers[i].displayName = document.getElementById('edit-provider-display-name').value;
             state.providers[i].apiFormat = document.getElementById('edit-provider-format').value;
             state.providers[i].baseUrl = document.getElementById('edit-provider-url').value;
             state.providers[i].apiKey = document.getElementById('edit-provider-key').value;
@@ -2749,17 +2841,16 @@
                     if (p.name) {
                         const existing = opencodeConfig.provider[p.name] || {};
                         opencodeConfig.provider[p.name] = {
-                            ...existing,  // Preserve all existing fields (npm, options.apiKey, etc.)
-                            name: p.name,
+                            ...existing,  // Preserve all existing fields
+                            name: p.displayName || existing.name || p.name,
+                            npm: p.npm || existing.npm || '@ai-sdk/openai-compatible',
+                            options: {
+                                ...(existing.options || {}),
+                                ...(p.baseUrl ? { baseURL: p.baseUrl } : {}),
+                                ...(p.apiKey ? { apiKey: p.apiKey } : {})
+                            },
                             models: p.models || existing.models || {}
                         };
-                        // Only update options.baseURL if we have a value
-                        if (p.baseUrl) {
-                            opencodeConfig.provider[p.name].options = {
-                                ...existing.options,
-                                baseURL: p.baseUrl
-                            };
-                        }
                     }
                 });
                 
@@ -2768,11 +2859,14 @@
                     const existing = opencodeConfig.provider[state.credentials.proxyName] || {};
                     opencodeConfig.provider[state.credentials.proxyName] = {
                         ...existing,
-                        name: state.credentials.proxyName,
+                        name: state.credentials.displayName || existing.name || state.credentials.proxyName,
+                        npm: state.credentials.npm || existing.npm || '@ai-sdk/openai-compatible',
                         options: {
-                            ...existing.options,
-                            baseURL: state.credentials.baseUrl
-                        }
+                            ...(existing.options || {}),
+                            baseURL: state.credentials.baseUrl,
+                            ...(state.credentials.apiKey ? { apiKey: state.credentials.apiKey } : {})
+                        },
+                        models: existing.models || {}
                     };
                 }
                 
@@ -3406,10 +3500,23 @@
         }
 
         function autoMatchModels() {
+            // Provider priority: hosted first, then others
+            const providerPriority = ['hosted'];
+            availableModels.forEach(m => {
+                if (m.provider && !providerPriority.includes(m.provider)) {
+                    providerPriority.push(m.provider);
+                }
+            });
+            
+            // Check if a model exists in availableModels
+            function modelExists(modelId) {
+                return availableModels.some(m => m.id === modelId);
+            }
+            
             // Pattern mapping for model keywords
             const patterns = {
                 opus: /opus|claude.*4.*5.*20251101/i,
-                sonnet: /sonnet|claude.*4.*5(?!.*20251101)/i,
+                sonnet: /sonnet|claude.*4.*5(?!.*20251101)|claude-sonnet-4/i,
                 haiku: /haiku/i,
                 gemini_pro: /gemini.*pro|gemini-2.*pro|gemini-3.*pro/i,
                 gemini_flash: /gemini.*flash|gemini-2.*flash|gemini-3.*flash/i,
@@ -3417,14 +3524,29 @@
                 gpt4_mini: /gpt-4\.1-mini|gpt-4o-mini/i,
                 codex: /codex|o3|o1-pro/i,
                 o1: /o1(?!.*mini)/i,
-                o3: /o3/i
+                o3: /o3/i,
+                deepseek: /deepseek-chat|deepseek-v3/i,
+                deepseek_reasoner: /deepseek-reasoner|deepseek-r1/i
             };
             
-            // Build matched models map
+            // Build matched models map with provider priority
             const matched = {};
             for (const [cat, pattern] of Object.entries(patterns)) {
-                const found = availableModels.find(m => pattern.test(m.id) || pattern.test(m.name));
-                if (found) matched[cat] = found.id;
+                // Find best match respecting provider priority
+                for (const provider of providerPriority) {
+                    const found = availableModels.find(m => 
+                        m.provider === provider && (pattern.test(m.id) || pattern.test(m.name))
+                    );
+                    if (found) {
+                        matched[cat] = found.id;
+                        break;
+                    }
+                }
+                // If not found in priority providers, try any
+                if (!matched[cat]) {
+                    const found = availableModels.find(m => pattern.test(m.id) || pattern.test(m.name));
+                    if (found) matched[cat] = found.id;
+                }
             }
             
             // Helper: find best model based on prefer array
@@ -3438,24 +3560,24 @@
             
             // Fallback tier mapping (if prefer doesn't match)
             const tierToModel = {
-                primary: matched.opus || matched.gpt4 || matched.sonnet || (availableModels[0] && availableModels[0].id),
-                reasoning: matched.codex || matched.o3 || matched.o1 || matched.gpt4 || matched.opus || matched.sonnet,
+                primary: matched.opus || matched.sonnet || matched.gpt4 || matched.deepseek || (availableModels[0] && availableModels[0].id),
+                reasoning: matched.codex || matched.o3 || matched.o1 || matched.deepseek_reasoner || matched.opus || matched.gpt4 || matched.sonnet,
                 fast: matched.haiku || matched.gemini_flash || matched.gpt4_mini || matched.sonnet,
-                multimodal: matched.gemini_pro || matched.gemini_flash || matched.sonnet,
-                secondary: matched.sonnet || matched.gpt4_mini || matched.gemini_pro
+                multimodal: matched.gemini_pro || matched.gemini_flash || matched.sonnet || matched.opus,
+                secondary: matched.sonnet || matched.gpt4_mini || matched.gemini_pro || matched.deepseek
             };
             
-            // Match agents - use prefer first, then tier fallback
+            // Match agents - check if current model exists, if not re-match
             for (const [id, info] of Object.entries(agentModelsData.agents)) {
-                if (!currentAgentModels[id]) {
+                if (!currentAgentModels[id] || !modelExists(currentAgentModels[id])) {
                     const preferMatch = findBestModel(info.prefer);
                     currentAgentModels[id] = preferMatch || tierToModel[info.tier] || tierToModel.primary || '';
                 }
             }
             
-            // Match categories - use prefer first, then tier fallback
+            // Match categories - check if current model exists, if not re-match
             for (const [id, info] of Object.entries(agentModelsData.categories)) {
-                if (!currentCategoryModels[id]) {
+                if (!currentCategoryModels[id] || !modelExists(currentCategoryModels[id])) {
                     const preferMatch = findBestModel(info.prefer);
                     currentCategoryModels[id] = preferMatch || tierToModel[info.tier] || tierToModel.primary || '';
                 }
@@ -3799,8 +3921,17 @@
                 if (ucState.config && ucState.config.enabled) {
                     const userResult = await window.api.hostedGetCurrentUser();
                     if (userResult.success && userResult.data && userResult.data.data) {
+                        const remoteUser = userResult.data.data;
+                        if (ucState.config.username && remoteUser.username !== ucState.config.username) {
+                            console.log('[user-center] Session user mismatch, clearing local state');
+                            ucState.config.enabled = false;
+                            await window.api.hostedSaveConfig({ enabled: false });
+                            await window.api.hostedLogout();
+                            showNotLoggedIn();
+                            return;
+                        }
                         ucState.loggedIn = true;
-                        ucState.user = userResult.data.data;
+                        ucState.user = remoteUser;
                         ucState.lastUsername = ucState.user.username;
                         localStorage.setItem('uc_last_username', ucState.lastUsername);
                         showLoggedIn();
@@ -3845,7 +3976,50 @@
             el('uc-form-register').classList.remove('hidden');
             el('uc-reg-username').value = '';
             el('uc-reg-email').value = '';
+            el('uc-reg-code').value = '';
             el('uc-reg-password').value = '';
+        }
+
+        let verificationCodeCountdown = 0;
+        async function sendVerificationCode() {
+            const email = el('uc-reg-email').value.trim();
+            if (!email) {
+                showToast('请先输入邮箱');
+                return;
+            }
+            if (verificationCodeCountdown > 0) {
+                return;
+            }
+            
+            const btn = el('uc-send-code-btn');
+            btn.disabled = true;
+            btn.textContent = '发送中...';
+            
+            try {
+                const result = await window.api.hostedSendVerificationCode(email);
+                if (result.success) {
+                    showToast('验证码已发送，请查收邮箱');
+                    verificationCodeCountdown = 60;
+                    const timer = setInterval(() => {
+                        verificationCodeCountdown--;
+                        if (verificationCodeCountdown <= 0) {
+                            clearInterval(timer);
+                            btn.disabled = false;
+                            btn.textContent = '发送验证码';
+                        } else {
+                            btn.textContent = verificationCodeCountdown + 's';
+                        }
+                    }, 1000);
+                } else {
+                    showToast('发送失败: ' + (result.error || '未知错误'));
+                    btn.disabled = false;
+                    btn.textContent = '发送验证码';
+                }
+            } catch (e) {
+                showToast('发送失败: ' + e.message);
+                btn.disabled = false;
+                btn.textContent = '发送验证码';
+            }
         }
 
         async function showLoggedIn() {
@@ -3853,11 +4027,11 @@
             el('uc-logged-in').classList.remove('hidden');
             if (ucState.user) {
                 el('uc-username').textContent = ucState.user.username || '';
-                el('uc-balance').textContent = '¥' + ((ucState.user.quota || 0) / 500000).toFixed(2);
-                el('uc-used-quota').textContent = '¥' + ((ucState.user.used_quota || 0) / 500000).toFixed(2);
+                el('uc-balance').textContent = '$' + ((ucState.user.quota || 0) / 500000).toFixed(2);
+                el('uc-used-quota').textContent = '$' + ((ucState.user.used_quota || 0) / 500000).toFixed(2);
                 el('uc-total-requests').textContent = (ucState.user.request_count || 0).toLocaleString();
                 el('uc-aff-count').textContent = (ucState.user.aff_count || 0).toLocaleString();
-                el('uc-aff-quota').textContent = '¥' + ((ucState.user.aff_quota || 0) / 500000).toFixed(2);
+                el('uc-aff-quota').textContent = '$' + ((ucState.user.aff_quota || 0) / 500000).toFixed(2);
                 
                 // 更新邀请链接
                 var affCode = ucState.user.aff_code || '';
@@ -3935,7 +4109,7 @@
                 const dayLabel = date.slice(5).replace('-', '/');
                 
                 barsHtml += '<div style="display: flex; flex-direction: column; align-items: center; flex: 1;">';
-                barsHtml += '<div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">¥' + displayValue + '</div>';
+                barsHtml += '<div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">$' + displayValue + '</div>';
                 barsHtml += '<div style="width: 24px; height: ' + height + 'px; background: var(--accent); border-radius: 2px;"></div>';
                 barsHtml += '</div>';
                 
@@ -4040,11 +4214,13 @@
         async function doRegister() {
             const username = el('uc-reg-username').value.trim();
             const email = el('uc-reg-email').value.trim();
+            const verificationCode = el('uc-reg-code').value.trim();
             const password = el('uc-reg-password').value;
             if (!username || !email || !password) { showToast('请填写所有必填项'); return; }
+            if (!verificationCode) { showToast('请输入邮箱验证码'); return; }
             if (password.length < 8) { showToast('密码至少需要8位'); return; }
             try {
-                const result = await window.api.hostedRegister(username, password, email, '', '');
+                const result = await window.api.hostedRegister(username, password, email, verificationCode, '');
                 if (result.success) {
                     showToast('注册成功，请登录');
                     ucState.lastUsername = username;
@@ -4065,6 +4241,9 @@
                 ucState.loggedIn = false;
                 ucState.user = null;
                 ucState.tokens = [];
+                ucState.lastUsername = '';
+                localStorage.removeItem('uc_last_username');
+                await window.api.hostedSaveConfig({ enabled: false, apiKey: '', username: '' });
                 showNotLoggedIn();
                 showToast('已退出登录');
             } catch (e) { showToast('退出失败: ' + e.message); }
@@ -4190,7 +4369,7 @@
             tbody.innerHTML = ucState.logs.map(function(log) {
                 var time = new Date(log.created_at * 1000).toLocaleString('zh-CN');
                 var tokens = ((log.prompt_tokens || 0) + (log.completion_tokens || 0)).toLocaleString();
-                return '<tr><td style="font-size:12px;color:#A1A1AA;">' + time + '</td><td><code style="font-size:12px;">' + (log.model_name || log.model || '-') + '</code></td><td>' + tokens + '</td><td>¥' + ((log.quota || 0) / 500000).toFixed(4) + '</td></tr>';
+                return '<tr><td style="font-size:12px;color:#A1A1AA;">' + time + '</td><td><code style="font-size:12px;">' + (log.model_name || log.model || '-') + '</code></td><td>' + tokens + '</td><td>$' + ((log.quota || 0) / 500000).toFixed(4) + '</td></tr>';
             }).join('');
             if (ucState.totalPages > 1) {
                 var h = '';
@@ -4210,12 +4389,12 @@
             try {
                 const result = await window.api.hostedRedeemCode(code);
                 if (result.success && result.data && result.data.success) {
-                    showToast('兑换成功！¥' + ((result.data.data || 0) / 500000).toFixed(2));
+                    showToast('兑换成功！$' + ((result.data.data || 0) / 500000).toFixed(2));
                     input.value = '';
                     const userResult = await window.api.hostedGetCurrentUser();
                     if (userResult.success && userResult.data && userResult.data.data) {
                         ucState.user = userResult.data.data;
-                        el('uc-balance').textContent = '¥' + ((ucState.user.quota || 0) / 500000).toFixed(2);
+                        el('uc-balance').textContent = '$' + ((ucState.user.quota || 0) / 500000).toFixed(2);
                     }
                 } else { showToast((result.data && result.data.message) || result.error || '兑换失败'); }
             } catch (e) { showToast('兑换失败: ' + e.message); }
@@ -4283,6 +4462,117 @@
             showToast('套餐功能暂未开放');
             ucState.selectedPlan = plan;
             updatePlanSelection();
+        }
+
+        // --- Feishu Bot Logic ---
+        
+        async function loadFeishuConfig() {
+            try {
+                const result = await window.api.getFeishuConfig();
+                if (result.success && result.data) {
+                    el('feishu-app-id').value = result.data.app_id;
+                    el('feishu-app-secret').value = result.data.app_secret;
+                    el('feishu-working-dir').value = result.data.working_dir;
+                    el('feishu-server-host').value = result.data.server_host;
+                    el('feishu-server-port').value = result.data.server_port;
+                    el('feishu-server-mode').checked = result.data.use_server_mode;
+                }
+                
+                // Check status
+                updateFeishuStatus();
+            } catch (e) {
+                console.error('Failed to load Feishu config:', e);
+            }
+        }
+        
+        async function saveFeishuConfig() {
+            const config = {
+                app_id: el('feishu-app-id').value,
+                app_secret: el('feishu-app-secret').value,
+                working_dir: el('feishu-working-dir').value,
+                server_host: el('feishu-server-host').value,
+                server_port: parseInt(el('feishu-server-port').value) || 4096,
+                use_server_mode: el('feishu-server-mode').checked
+            };
+            
+            const result = await window.api.saveFeishuConfig(config);
+            if (result.success) {
+                showToast('飞书配置已保存');
+            } else {
+                showToast('保存失败: ' + result.error);
+            }
+        }
+        
+        async function startFeishuBot() {
+            el('feishu-log-area').innerHTML = '<div class="text-muted">正在启动...</div>';
+            const result = await window.api.startFeishuBot();
+            if (result.success) {
+                showToast('启动指令已发送');
+                updateFeishuStatus();
+            } else {
+                showToast('启动失败: ' + result.error);
+                el('feishu-log-area').innerHTML += `<div style="color: var(--danger)">启动失败: ${result.error}</div>`;
+            }
+        }
+        
+        async function stopFeishuBot() {
+            const result = await window.api.stopFeishuBot();
+            if (result.success) {
+                showToast('已停止');
+                updateFeishuStatus();
+            } else {
+                showToast('停止失败: ' + result.error);
+            }
+        }
+        
+        async function updateFeishuStatus() {
+            const result = await window.api.getFeishuBotStatus();
+            const isRunning = result.success && result.data.running;
+            
+            const indicator = el('feishu-status-indicator');
+            const startBtn = el('btn-start-feishu');
+            const stopBtn = el('btn-stop-feishu');
+            
+            if (isRunning) {
+                indicator.innerHTML = `
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success);"></div>
+                    <span style="color: var(--success)">运行中</span>
+                `;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } else {
+                indicator.innerHTML = `
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);"></div>
+                    <span class="text-muted">未运行</span>
+                `;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        }
+        
+        // Listen for logs
+        if (window.api.onFeishuBotLog) {
+            window.api.onFeishuBotLog((log) => {
+                const logArea = el('feishu-log-area');
+                const div = document.createElement('div');
+                div.textContent = log;
+                logArea.appendChild(div);
+                logArea.scrollTop = logArea.scrollHeight;
+            });
+        }
+        
+        if (window.api.onFeishuBotStatus) {
+            window.api.onFeishuBotStatus((status) => {
+                updateFeishuStatus();
+                if (!status.running && status.code !== 0 && status.code !== null) {
+                    const logArea = el('feishu-log-area');
+                    const div = document.createElement('div');
+                    div.style.color = 'var(--danger)';
+                    div.textContent = `Process exited with code ${status.code}`;
+                    logArea.appendChild(div);
+                    logArea.scrollTop = logArea.scrollHeight;
+                }
+            });
         }
 
         // Start

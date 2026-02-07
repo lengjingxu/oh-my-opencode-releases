@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const { copyDirSync } = require("./lib/utils");
 const { execSync, exec } = require('child_process');
 const { initAutoUpdater } = require('./updater');
 
@@ -807,22 +808,6 @@ ipcMain.handle('setup-config', async (event, options) => {
   }
 });
 
-function copyDirSync(src, dest) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-    if (entry.isDirectory()) {
-      copyDirSync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
-}
-
 function applyTechStack(frontendFile, backendFile, designStyle, colorPalette) {
   const configPath = path.join(CONFIG_DIR, 'oh-my-opencode.json');
   const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
@@ -1228,13 +1213,16 @@ ipcMain.handle('get-webhook-config', async () => {
   try {
     if (fs.existsSync(WEBHOOK_CONFIG_FILE)) {
       const config = JSON.parse(fs.readFileSync(WEBHOOK_CONFIG_FILE, 'utf-8'));
+      const scenarios = config.scenarios || [];
       return { 
         success: true, 
         data: { 
           type: 'feishu', 
           url: config.webhook_url,
           enabled: config.enabled !== false,
-          scenarios: config.scenarios || ['confirmation', 'completion', 'error']
+          notify_permission: scenarios.includes('confirmation'),
+          notify_idle: scenarios.includes('completion'),
+          notify_error: scenarios.includes('error')
         } 
       };
     }
@@ -1354,10 +1342,16 @@ export default FeishuNotificationPlugin;
     
     fs.writeFileSync(WEBHOOK_PLUGIN_FILE, pluginCode);
     
+    // 根据前端传递的字段构建 scenarios 数组
+    const scenarios = [];
+    if (config.notify_permission) scenarios.push('confirmation');
+    if (config.notify_idle) scenarios.push('completion');
+    if (config.notify_error) scenarios.push('error');
+    
     const pluginConfig = {
       enabled: config.enabled !== false,
       webhook_url: config.url,
-      scenarios: config.scenarios || ['confirmation', 'completion', 'error'],
+      scenarios: scenarios.length > 0 ? scenarios : [],
       created_at: new Date().toISOString()
     };
     fs.writeFileSync(WEBHOOK_CONFIG_FILE, JSON.stringify(pluginConfig, null, 2));
@@ -1569,6 +1563,20 @@ ipcMain.handle('hosted-apply-config', async (event, apiKey, plan) => {
     config.enabled = true;
     hostedConfig.saveHostedConfig(config);
     
+    let remoteConfig = null;
+    try {
+      const modelsResult = await hostedService.getAvailableModels();
+      if (modelsResult && modelsResult.data) {
+        const modelList = modelsResult.data.map(m => m.id || m);
+        remoteConfig = {
+          baseUrl: config.baseUrl,
+          models: modelList
+        };
+      }
+    } catch (e) {
+      console.error('[hosted-apply-config] Failed to fetch models, using fallback:', e.message);
+    }
+    
     const opencodeConfigPath = path.join(CONFIG_DIR, 'opencode.json');
     const ohMyConfigPath = path.join(CONFIG_DIR, 'oh-my-opencode.json');
     
@@ -1582,7 +1590,7 @@ ipcMain.handle('hosted-apply-config', async (event, apiKey, plan) => {
       ohMyOpencodeConfig = JSON.parse(fs.readFileSync(ohMyConfigPath, 'utf-8'));
     }
     
-    const result = hostedConfig.applyHostedServiceConfig(opencodeConfig, ohMyOpencodeConfig, config);
+    const result = hostedConfig.applyHostedServiceConfig(opencodeConfig, ohMyOpencodeConfig, config, remoteConfig);
     
     fs.writeFileSync(opencodeConfigPath, JSON.stringify(result.opencodeConfig, null, 2));
     fs.writeFileSync(ohMyConfigPath, JSON.stringify(result.ohMyConfig, null, 2));
@@ -1668,4 +1676,188 @@ ipcMain.handle('write-skill-config', async (event, skillName, config) => {
   } catch (error) {
     return { success: false, error: error.message };
   }
+});
+
+// ============================================
+// Feishu Bot Configuration & Process Management
+// ============================================
+let feishuBotProcess = null;
+
+ipcMain.handle('get-feishu-config', async () => {
+  try {
+    if (fs.existsSync(CREDENTIALS_PATH)) {
+      const cred = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf-8'));
+      const feishuConfig = cred.feishu || {};
+      return { 
+        success: true, 
+        data: {
+          app_id: feishuConfig.app_id || '',
+          app_secret: feishuConfig.app_secret ? '••••••••' : '',
+          working_dir: feishuConfig.working_dir || '',
+          server_host: feishuConfig.server_host || '127.0.0.1',
+          server_port: feishuConfig.server_port || 4096,
+          use_server_mode: feishuConfig.use_server_mode !== false
+        }
+      };
+    }
+    return { success: true, data: { app_id: '', app_secret: '', working_dir: '', server_host: '127.0.0.1', server_port: 4096, use_server_mode: true } };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('save-feishu-config', async (event, config) => {
+  try {
+    let cred = {};
+    if (fs.existsSync(CREDENTIALS_PATH)) {
+      cred = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf-8'));
+    }
+    
+    // Preserve existing secret if masked
+    const existingSecret = cred.feishu?.app_secret || '';
+    
+    cred.feishu = {
+      app_id: config.app_id || '',
+      app_secret: config.app_secret === '••••••••' ? existingSecret : (config.app_secret || ''),
+      working_dir: config.working_dir || '',
+      server_host: config.server_host || '127.0.0.1',
+      server_port: config.server_port || 4096,
+      use_server_mode: config.use_server_mode !== false
+    };
+    
+    fs.writeFileSync(CREDENTIALS_PATH, JSON.stringify(cred, null, 2));
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('start-feishu-bot', async () => {
+  try {
+    if (feishuBotProcess) {
+      return { success: false, error: '飞书机器人已在运行中' };
+    }
+    
+    if (!fs.existsSync(CREDENTIALS_PATH)) {
+      return { success: false, error: '请先配置飞书应用凭证' };
+    }
+    
+    const cred = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf-8'));
+    const feishuConfig = cred.feishu || {};
+    
+    if (!feishuConfig.app_id || !feishuConfig.app_secret) {
+      return { success: false, error: '请先配置飞书 App ID 和 App Secret' };
+    }
+    
+    const { spawn } = require('child_process');
+    
+    // feishu_bot 模块路径 - 优先配置目录 > App资源目录 > 开发目录
+    const feishuBotPaths = [
+      path.join(CONFIG_DIR, 'feishu_bot'),  // ~/.config/opencode/feishu_bot
+      path.join(APP_DIR, 'feishu_bot'),     // 打包后 App Resources/feishu_bot
+      path.join(os.homedir(), 'Desktop', 'codepro', '阿里云函数管理', 'opencode配置', 'feishu_bot'),  // 开发目录
+    ];
+    
+    let feishuBotDir = null;
+    for (const p of feishuBotPaths) {
+      if (fs.existsSync(path.join(p, 'main.py'))) {
+        feishuBotDir = path.dirname(p);  // 父目录，用于 PYTHONPATH
+        break;
+      }
+    }
+    
+    if (!feishuBotDir) {
+      return { success: false, error: '找不到 feishu_bot 模块。请确保已安装到 ~/.config/opencode/feishu_bot/' };
+    }
+    
+    const args = [
+      '-m', 'feishu_bot.main',
+      '--app-id', feishuConfig.app_id,
+      '--app-secret', feishuConfig.app_secret,
+      '--server-host', feishuConfig.server_host || '127.0.0.1',
+      '--server-port', String(feishuConfig.server_port || 4096),
+      '--server-password', feishuConfig.server_password || 'test123'
+    ];
+    
+    if (feishuConfig.working_dir) {
+      args.push('--working-dir', feishuConfig.working_dir);
+    }
+    
+    if (!feishuConfig.use_server_mode) {
+      args.push('--no-server');
+    }
+    
+    const pythonPaths = [
+      '/Library/Frameworks/Python.framework/Versions/3.13/bin/python3',
+      '/Library/Frameworks/Python.framework/Versions/3.12/bin/python3',
+      '/opt/homebrew/bin/python3',
+      '/usr/local/bin/python3',
+      'python3'
+    ];
+    
+    let pythonBin = 'python3';
+    for (const p of pythonPaths) {
+      if (p === 'python3' || fs.existsSync(p)) {
+        pythonBin = p;
+        break;
+      }
+    }
+    
+    const env = { ...process.env, PYTHONPATH: feishuBotDir };
+    
+    feishuBotProcess = spawn(pythonBin, args, {
+      cwd: feishuBotDir,
+      env: env,
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+    
+    feishuBotProcess.stdout.on('data', (data) => {
+      console.log('[feishu-bot]', data.toString());
+      if (mainWindow) {
+        mainWindow.webContents.send('feishu-bot-log', data.toString());
+      }
+    });
+    
+    feishuBotProcess.stderr.on('data', (data) => {
+      console.error('[feishu-bot]', data.toString());
+      if (mainWindow) {
+        mainWindow.webContents.send('feishu-bot-log', data.toString());
+      }
+    });
+    
+    feishuBotProcess.on('close', (code) => {
+      console.log('[feishu-bot] Process exited with code:', code);
+      feishuBotProcess = null;
+      if (mainWindow) {
+        mainWindow.webContents.send('feishu-bot-status', { running: false, code });
+      }
+    });
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('stop-feishu-bot', async () => {
+  try {
+    if (!feishuBotProcess) {
+      return { success: true };
+    }
+    
+    feishuBotProcess.kill('SIGTERM');
+    feishuBotProcess = null;
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('get-feishu-bot-status', async () => {
+  return { 
+    success: true, 
+    data: { 
+      running: feishuBotProcess !== null 
+    } 
+  };
 });

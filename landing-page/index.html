@@ -171,6 +171,7 @@
                         <div class="ml-10 flex items-baseline space-x-8">
                             <a href="#methodology" class="hover:text-white text-gray-300 px-3 py-2 rounded-md text-sm font-medium transition-colors">核心理念</a>
                             <a href="#skills" class="hover:text-white text-gray-300 px-3 py-2 rounded-md text-sm font-medium transition-colors">Skills 能力</a>
+                            <a href="#feishu-bot" class="hover:text-white text-gray-300 px-3 py-2 rounded-md text-sm font-medium transition-colors">飞书 Bot</a>
                             <a href="#cost" class="hover:text-white text-gray-300 px-3 py-2 rounded-md text-sm font-medium transition-colors">成本对比</a>
                             <a href="https://github.com" target="_blank" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium transition-all border border-white/10 flex items-center gap-2">
                                 <i data-lucide="github" class="w-4 h-4"></i> GitHub
@@ -199,7 +200,7 @@
                 </p>
                 
                 <div class="mt-10 flex justify-center gap-4">
-                    <a href="https://github.com/lengjingxu/oh-my-opencode-releases/releases/download/v1.0.1/Super.OpenCode-1.0.1-arm64.dmg" class="group relative px-8 py-4 bg-brand-primary hover:bg-brand-primary/90 rounded-xl font-semibold text-white transition-all shadow-[0_0_20px_rgba(139,92,246,0.5)] hover:shadow-[0_0_30px_rgba(139,92,246,0.7)] flex items-center gap-2">
+                    <a href="https://github.com/lengjingxu/oh-my-opencode-releases/releases/download/v1.1.1/Super.OpenCode-1.1.1-arm64.dmg" class="group relative px-8 py-4 bg-brand-primary hover:bg-brand-primary/90 rounded-xl font-semibold text-white transition-all shadow-[0_0_20px_rgba(139,92,246,0.5)] hover:shadow-[0_0_30px_rgba(139,92,246,0.7)] flex items-center gap-2">
                         <i data-lucide="download" class="w-5 h-5"></i>
                         下载 Mac 版
                         <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
@@ -1556,6 +1557,263 @@
                         </div>
 
                         <p class="text-brand-primary font-bold text-lg">每个环节都有对应的 Skill 支持</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feishu Bot Section -->
+        <section id="feishu-bot" class="py-24 relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute top-1/2 left-0 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] -z-10"></div>
+            <div class="absolute bottom-0 right-0 w-[400px] h-[400px] bg-brand-primary/10 rounded-full blur-[80px] -z-10"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Section Header -->
+                <div class="text-center mb-20 reveal">
+                    <span class="text-blue-400 font-semibold tracking-wider uppercase text-sm">Mobile Command Center</span>
+                    <h2 class="text-4xl md:text-5xl font-bold font-display mt-2 mb-6">
+                        离开电脑，<span class="text-gradient">AI 不停工</span>
+                    </h2>
+                    <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                        通过飞书 Bot 接入 OpenCode，手机上也能指挥 AI 写代码、查进度、看 Diff。<br>
+                        <strong class="text-white">通勤路上、午餐间隙、甚至躺在床上</strong>，工作从未中断。
+                    </p>
+                </div>
+
+                <!-- Hero Visual: Phone Mockup + Feature Highlights -->
+                <div class="flex flex-col lg:flex-row items-center gap-16 mb-24 reveal">
+                    <!-- Left: Phone Mockup -->
+                    <div class="flex-1 flex justify-center">
+                        <div class="relative">
+                            <!-- Phone Frame -->
+                            <div class="w-[300px] glass-panel rounded-[2.5rem] p-3 border-2 border-white/10 shadow-[0_0_60px_rgba(59,130,246,0.2)]">
+                                <!-- Notch -->
+                                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#0f172a] rounded-b-2xl z-20"></div>
+                                <!-- Screen -->
+                                <div class="bg-[#1e293b] rounded-[2rem] overflow-hidden">
+                                    <!-- Status Bar -->
+                                    <div class="flex justify-between items-center px-6 pt-8 pb-2 text-xs text-gray-400">
+                                        <span>9:41</span>
+                                        <div class="flex gap-1">
+                                            <i data-lucide="wifi" class="w-3 h-3"></i>
+                                            <i data-lucide="battery-full" class="w-3 h-3"></i>
+                                        </div>
+                                    </div>
+                                    <!-- Chat Header -->
+                                    <div class="px-4 py-3 border-b border-white/5 flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                            <i data-lucide="bot" class="w-4 h-4 text-blue-400"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-bold text-white">OpenCode Bot</div>
+                                            <div class="text-xs text-green-400">在线</div>
+                                        </div>
+                                    </div>
+                                    <!-- Chat Messages -->
+                                    <div class="p-4 space-y-3 min-h-[320px]">
+                                        <!-- User Message -->
+                                        <div class="flex justify-end">
+                                            <div class="bg-blue-500/20 rounded-2xl rounded-tr-sm px-4 py-2 max-w-[200px]">
+                                                <div class="text-sm text-white">帮我重构 auth 模块，加上 JWT 刷新</div>
+                                            </div>
+                                        </div>
+                                        <!-- Bot Thinking -->
+                                        <div class="flex justify-start">
+                                            <div class="bg-white/5 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[220px] border border-white/5">
+                                                <div class="text-xs text-blue-400 font-bold mb-2">⚙️ AI 正在工作...</div>
+                                                <div class="text-xs text-gray-400 space-y-1">
+                                                    <div>✅ ~~分析现有 auth 结构~~</div>
+                                                    <div>🔄 实现 JWT refresh ← 进行中</div>
+                                                    <div>⬜ 更新中间件</div>
+                                                    <div>⬜ 添加测试</div>
+                                                </div>
+                                                <div class="mt-2 text-xs text-gray-500">█████░░░░░ 2/4 (50%)</div>
+                                            </div>
+                                        </div>
+                                        <!-- Quick Commands -->
+                                        <div class="flex gap-2 flex-wrap">
+                                            <span class="px-2 py-1 bg-white/5 rounded-lg text-xs text-gray-400 border border-white/5">/t 任务</span>
+                                            <span class="px-2 py-1 bg-white/5 rounded-lg text-xs text-gray-400 border border-white/5">/d Diff</span>
+                                            <span class="px-2 py-1 bg-red-500/10 rounded-lg text-xs text-red-400 border border-red-500/20">/x 终止</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Glow Effect -->
+                            <div class="absolute inset-0 bg-blue-500/20 blur-[60px] -z-10 scale-75"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Key Value Props -->
+                    <div class="flex-1 space-y-8">
+                        <div class="glass-card p-6 rounded-2xl border-l-4 border-blue-500 hover:bg-blue-500/5 transition-all">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div class="p-2 rounded-lg bg-blue-500/20 text-blue-400">
+                                    <i data-lucide="smartphone" class="w-6 h-6"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white">手机即指挥中心</h3>
+                            </div>
+                            <p class="text-gray-400">不在电脑前？没关系。打开飞书，发条消息，AI 立刻开始工作。通勤、午餐、散步时都能推进项目。</p>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl border-l-4 border-purple-500 hover:bg-purple-500/5 transition-all">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div class="p-2 rounded-lg bg-purple-500/20 text-purple-400">
+                                    <i data-lucide="eye" class="w-6 h-6"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white">实时进度可视化</h3>
+                            </div>
+                            <p class="text-gray-400">飞书卡片实时更新 Todo 进度条、代码 Diff、Git 状态。AI 在做什么，一目了然。</p>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-2xl border-l-4 border-green-500 hover:bg-green-500/5 transition-all">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div class="p-2 rounded-lg bg-green-500/20 text-green-400">
+                                    <i data-lucide="wifi-off" class="w-6 h-6"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white">零公网依赖</h3>
+                            </div>
+                            <p class="text-gray-400">WebSocket 长连接模式，无需公网 IP、域名或内网穿透。本地电脑运行，飞书直连。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20 reveal">
+                    <div class="glass-card p-6 rounded-2xl text-center group hover:bg-white/5 transition-all">
+                        <div class="w-14 h-14 mx-auto bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 text-blue-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="message-square" class="w-7 h-7"></i>
+                        </div>
+                        <h4 class="font-bold text-white mb-2">自然语言对话</h4>
+                        <p class="text-sm text-gray-400">直接发消息给 Bot，像跟同事聊天一样指挥 AI 工作</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl text-center group hover:bg-white/5 transition-all">
+                        <div class="w-14 h-14 mx-auto bg-purple-500/20 rounded-xl flex items-center justify-center mb-4 text-purple-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="layers" class="w-7 h-7"></i>
+                        </div>
+                        <h4 class="font-bold text-white mb-2">多会话管理</h4>
+                        <p class="text-sm text-gray-400">创建、切换、管理多个独立会话，不同项目互不干扰</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl text-center group hover:bg-white/5 transition-all">
+                        <div class="w-14 h-14 mx-auto bg-orange-500/20 rounded-xl flex items-center justify-center mb-4 text-orange-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="terminal" class="w-7 h-7"></i>
+                        </div>
+                        <h4 class="font-bold text-white mb-2">快捷命令</h4>
+                        <p class="text-sm text-gray-400">/t 看任务 · /d 看 Diff · /v Git 状态 · /x 紧急终止</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl text-center group hover:bg-white/5 transition-all">
+                        <div class="w-14 h-14 mx-auto bg-pink-500/20 rounded-xl flex items-center justify-center mb-4 text-pink-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="brain" class="w-7 h-7"></i>
+                        </div>
+                        <h4 class="font-bold text-white mb-2">对话记忆</h4>
+                        <p class="text-sm text-gray-400">自动摘要历史会话，关键词索引，跨会话知识传递</p>
+                    </div>
+                </div>
+
+                <!-- Scenario Cards -->
+                <div class="reveal">
+                    <h3 class="text-2xl font-bold font-display mb-10 text-center">真实使用场景</h3>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Scenario 1 -->
+                        <div class="glass-card p-8 rounded-2xl relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-3 opacity-10 font-display font-bold text-5xl text-blue-500">01</div>
+                            <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6 text-blue-400">
+                                <i data-lucide="train-front" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-white mb-3">通勤路上</h4>
+                            <p class="text-sm text-gray-400 mb-4">地铁上掏出手机，给 Bot 发一条："把昨天的 PR review 意见都改了，顺便加上单测"。到公司时，代码已经改好了。</p>
+                            <div class="flex items-center gap-2 text-xs text-blue-400">
+                                <i data-lucide="clock" class="w-3 h-3"></i>
+                                <span>节省 30 分钟</span>
+                            </div>
+                        </div>
+
+                        <!-- Scenario 2 -->
+                        <div class="glass-card p-8 rounded-2xl relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-3 opacity-10 font-display font-bold text-5xl text-purple-500">02</div>
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6 text-purple-400">
+                                <i data-lucide="coffee" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-white mb-3">午餐间隙</h4>
+                            <p class="text-sm text-gray-400 mb-4">吃饭时想到一个优化方案，立刻发给 Bot。/t 看进度，/d 看改了哪些文件。吃完饭回去直接 review。</p>
+                            <div class="flex items-center gap-2 text-xs text-purple-400">
+                                <i data-lucide="zap" class="w-3 h-3"></i>
+                                <span>灵感不丢失</span>
+                            </div>
+                        </div>
+
+                        <!-- Scenario 3 -->
+                        <div class="glass-card p-8 rounded-2xl relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-3 opacity-10 font-display font-bold text-5xl text-green-500">03</div>
+                            <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-6 text-green-400">
+                                <i data-lucide="moon" class="w-6 h-6"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-white mb-3">下班之后</h4>
+                            <p class="text-sm text-gray-400 mb-4">睡前想起明天要 demo，发条消息让 AI 准备好。第二天早上打开电脑，功能已经实现，测试已经通过。</p>
+                            <div class="flex items-center gap-2 text-xs text-green-400">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                <span>AI 替你加班</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Architecture Diagram -->
+                <div class="mt-20 glass-panel p-8 md:p-12 rounded-3xl border border-white/10 reveal">
+                    <h3 class="text-xl font-bold mb-8 text-center">技术架构</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-4 text-sm">
+                        <div class="px-6 py-3 bg-blue-500/10 rounded-lg border border-blue-500/20 text-center">
+                            <div class="font-bold text-blue-400">飞书 App</div>
+                            <div class="text-xs text-gray-500 mt-1">手机 / 桌面</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <i data-lucide="arrow-right" class="w-5 h-5 text-gray-500 hidden md:block"></i>
+                            <i data-lucide="arrow-down" class="w-5 h-5 text-gray-500 md:hidden"></i>
+                            <span class="text-xs text-gray-500">WebSocket</span>
+                        </div>
+                        <div class="px-6 py-3 bg-purple-500/10 rounded-lg border border-purple-500/20 text-center">
+                            <div class="font-bold text-purple-400">Feishu Bot</div>
+                            <div class="text-xs text-gray-500 mt-1">本地运行</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <i data-lucide="arrow-right" class="w-5 h-5 text-gray-500 hidden md:block"></i>
+                            <i data-lucide="arrow-down" class="w-5 h-5 text-gray-500 md:hidden"></i>
+                            <span class="text-xs text-gray-500">HTTP + SSE</span>
+                        </div>
+                        <div class="px-6 py-3 bg-green-500/10 rounded-lg border border-green-500/20 text-center">
+                            <div class="font-bold text-green-400">OpenCode Server</div>
+                            <div class="text-xs text-gray-500 mt-1">AI 引擎</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <i data-lucide="arrow-right" class="w-5 h-5 text-gray-500 hidden md:block"></i>
+                            <i data-lucide="arrow-down" class="w-5 h-5 text-gray-500 md:hidden"></i>
+                            <span class="text-xs text-gray-500">执行</span>
+                        </div>
+                        <div class="px-6 py-3 bg-white/5 rounded-lg border border-white/10 text-center">
+                            <div class="font-bold text-white">你的代码库</div>
+                            <div class="text-xs text-gray-500 mt-1">本地项目</div>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center text-xs text-gray-500">
+                        全程本地运行，代码不出你的电脑。飞书仅传递文字指令和结果摘要。
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="mt-20 reveal text-center">
+                    <div class="inline-block p-1 rounded-2xl bg-gradient-to-r from-blue-500 to-brand-primary">
+                        <div class="bg-[#0f172a] rounded-xl p-8 md:p-12">
+                            <h3 class="text-2xl md:text-3xl font-bold mb-4">
+                                你的 AI 员工，<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-brand-primary">24 小时待命</span>
+                            </h3>
+                            <p class="text-gray-400 text-lg mb-2">
+                                不在电脑前也能继续指挥工作 —— 这才是 AI 编程该有的样子。
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

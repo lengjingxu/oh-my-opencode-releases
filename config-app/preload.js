@@ -97,7 +97,16 @@ contextBridge.exposeInMainWorld('api', {
   hostedGetPlanModels: (plan) => ipcRenderer.invoke('hosted-get-plan-models', plan),
   hostedGetUsageLogs: (page, pageSize) => ipcRenderer.invoke('hosted-get-usage-logs', page, pageSize),
   hostedRedeemCode: (code) => ipcRenderer.invoke('hosted-redeem-code', code),
-  hostedGetStatistics: (startTime, endTime) => ipcRenderer.invoke('hosted-get-statistics', startTime, endTime)
+  hostedGetStatistics: (startTime, endTime) => ipcRenderer.invoke('hosted-get-statistics', startTime, endTime),
+  
+  // Feishu Bot
+  getFeishuConfig: () => ipcRenderer.invoke('get-feishu-config'),
+  saveFeishuConfig: (config) => ipcRenderer.invoke('save-feishu-config', config),
+  startFeishuBot: () => ipcRenderer.invoke('start-feishu-bot'),
+  stopFeishuBot: () => ipcRenderer.invoke('stop-feishu-bot'),
+  getFeishuBotStatus: () => ipcRenderer.invoke('get-feishu-bot-status'),
+  onFeishuBotLog: (callback) => ipcRenderer.on('feishu-bot-log', (_, log) => callback(log)),
+  onFeishuBotStatus: (callback) => ipcRenderer.on('feishu-bot-status', (_, status) => callback(status))
 });
 
 contextBridge.exposeInMainWorld('updater', {

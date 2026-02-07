@@ -1,6 +1,6 @@
 {
   "name": "super-opencode",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Super OpenCode 配置管理中心",
   "main": "main.js",
   "scripts": {
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@electron/notarize": "^3.1.1",
     "@playwright/test": "^1.58.1",
-    "dotenv": "^17.2.3",
+    "dotenv": "^16.0.0",
     "electron": "^28.3.3",
     "electron-builder": "^24.9.1",
     "jest": "^30.2.0",
@@ -54,7 +54,8 @@
       "hooks/**/*",
       "tech-stacks/**/*",
       "!dist/**/*",
-      "!scripts/**/*"
+      "!scripts/**/*",
+      "!feishu_bot/**/*"
     ],
     "extraResources": [
       {
@@ -72,6 +73,11 @@
       {
         "from": "tech-stacks",
         "to": "tech-stacks"
+      },
+      {
+        "from": "feishu_bot",
+        "to": "feishu_bot",
+        "filter": ["**/*.py", "**/*.toml", "**/*.sh", "**/*.plist", "**/requirements.txt"]
       }
     ],
     "mac": {
