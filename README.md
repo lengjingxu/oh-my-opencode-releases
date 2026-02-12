@@ -1,100 +1,121 @@
 # Super OpenCode
 
-> 整合 OpenCode + Oh-My-OpenCode，自动化应用最佳实践的 AI 编程助手配置中心
+> 开箱即用的多 Agent AI 编程方案 — 不是更聪明的 AI，而是更聪明的使用方式
 
-## 项目定位
+<!-- 主界面截图 -->
+<!-- ![Super OpenCode 主界面](screenshots/main.png) -->
 
-Super OpenCode 是一个**一站式 AI 编程环境配置工具**，旨在：
+## 为什么需要 Super OpenCode？
 
-1. **整合最佳实践** - 将 OpenCode 和 Oh-My-OpenCode 的强大能力整合到一个易用的桌面应用中
-2. **自动化配置** - 用户无需手动编辑配置文件，通过图形界面即可完成所有设置
-3. **开箱即用** - 下载安装后，按向导完成配置，立即开始 AI 辅助编程
+用 AI 写代码，你大概率遇到过这些问题：
 
-## 核心理念
+| 痛点 | 原因 | Super OpenCode 怎么解决 |
+|------|------|------------------------|
+| AI 聊几轮就"失忆" | 上下文窗口被代码和对话历史填满，指令被丢弃 | 多 Agent 分治，每个 Agent 只处理自己的上下文 |
+| 所有任务都用最贵的模型 | 没有任务分类机制 | 智能路由：简单任务用 Haiku，复杂任务才用 Opus |
+| 生成的 UI 千篇一律 | AI 缺少设计系统知识 | 内置 67 种设计风格、96 种配色方案的 Skill |
+| 国内网络用不了 | Anthropic/OpenAI 需要代理 | 预配置国内可直连的 API 服务 |
+| 配置太复杂 | 需要手动编辑多个 JSON 文件 | 桌面应用，图形界面一键配置 |
 
-### 🧠 多模型协作
+## 核心优势
 
-不同的任务需要不同的模型能力：
-- **推理型模型** (Claude Opus, o1) - 处理复杂架构设计、疑难 Bug 分析
-- **快速型模型** (Claude Sonnet, GPT-4o) - 日常编码、快速迭代
-- **专项模型** - 代码补全、文档生成等特定任务
+### 🤖 多 Agent 协作，不再失忆
 
-Super OpenCode 让你为不同场景配置最合适的模型，实现成本与效果的最优平衡。
+单个 AI 承载不了所有上下文。Super OpenCode 把任务拆给专职 Agent，每个只关注自己的领域：
 
-### 🤖 多代理分工
+```
+                    ┌─────────────┐
+                    │  Sisyphus   │  主编排：分解任务、协调全局
+                    │  (Master)   │
+                    └──────┬──────┘
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+        ┌──────────┐ ┌──────────┐ ┌──────────┐
+        │  Oracle  │ │ Explore  │ │ Librarian│
+        │ 架构顾问 │ │ 代码搜索 │ │ 文档检索 │
+        └──────────┘ └──────────┘ └──────────┘
+```
 
-基于 Oh-My-OpenCode 的多代理架构：
-- **Sisyphus** - 主代理，负责任务分解和协调
-- **Oracle** - 高智商顾问，处理复杂推理和架构决策
-- **Explore** - 代码库探索专家
-- **Librarian** - 文档和外部资源检索
-- **Prometheus** - 任务规划
-- **Momus** - 方案审查
+子 Agent 只返回结果，不返回过程 — 主 Agent 的上下文始终保持清洁。
 
-每个代理专注于自己擅长的领域，协作完成复杂任务。
+### 💰 智能路由，Token 成本降 50%+
 
-### 📋 Skill 流程控制
+不是所有任务都需要最贵的模型：
 
-通过 Skill 机制约束 AI 行为：
-- **结构化指令** - 避免 AI 不按要求执行
-- **领域知识注入** - 为特定任务提供专业上下文
-- **可复用流程** - 将最佳实践封装为可复用的 Skill
+| 任务类型 | 传统方式 (全用 GPT-4) | Super OpenCode | 节省 |
+|---------|----------------------|----------------|------|
+| 文档修正 | $0.60 | $0.02 (Haiku) | -96% |
+| 前端页面 | $2.50 | $0.50 (Gemini) | -80% |
+| 复杂重构 | $3.00 | $3.00 (Opus) | 0% |
 
-内置 Skill 包括：
-- `ui-ux-pro-max` - UI/UX 设计智能
-- `git-master` - Git 操作规范
-- `test-runner` - 测试执行框架
-- `deploy-fc` / `deploy-ecs` / `deploy-docker` - 部署能力
+### 🛡️ 防御性设计，AI 不再跑偏
 
-### 🛠️ AI 自主能力扩展
+- **防失忆**：任务续接钩子自动检测未完成的 todo，强制 AI 继续
+- **防越界**：7 段式委派结构，子 Agent 有明确的 MUST DO / MUST NOT DO
+- **防崩溃**：上下文超限自动压缩，编辑失败自动重试
 
-为 AI 提供更多自主完成工作的能力：
+### 🎨 专业级 UI 输出
 
-| 能力 | 说明 |
+内置 `ui-ux-pro-max` Skill，告别 AI 生成的"紫粉渐变"审美：
+
+- 67 种设计风格 · 96 种配色方案 · 57 组字体搭配
+- 完整交互状态 (Hover/Focus/Active/Disabled)
+- WCAG 对比度标准 · Lucide/Heroicons 图标系统
+
+<!-- UI 对比截图 -->
+<!-- ![UI 输出对比](screenshots/ui-comparison.png) -->
+
+### 🌐 国内开箱即用
+
+- 预配置国内可直连的 API 代理服务
+- 支持 OpenRouter、硅基流动等中转
+- 一键配置，无需折腾代理
+
+## 功能一览
+
+<!-- 配置界面截图 -->
+<!-- ![配置管理界面](screenshots/config.png) -->
+
+| 功能 | 说明 |
 |------|------|
-| **图片素材生成** | 通过 Stable Diffusion API 生成项目所需图片 |
-| **SQL 查询** | 直接连接数据库执行查询，理解数据结构 |
-| **服务器部署** | 自动部署到阿里云函数计算、ECS、Docker |
-| **通知推送** | 任务完成后通过飞书/企业微信/钉钉通知 |
+| **安装向导** | 自动安装 OpenCode + Oh-My-OpenCode，选择技术栈，配置 API Key |
+| **模型配置** | 为不同 Agent / Category 分配最合适的模型 |
+| **Skill 管理** | 启用/配置 10+ 内置 Skill |
+| **自动更新** | 基于 GitHub Releases 的热更新 |
 
-## 解决的问题
+### 内置 Skills
 
-### 🌐 中国网络环境适配
+| Skill | 能力 |
+|-------|------|
+| `ui-ux-pro-max` | 专业 UI/UX 设计智能 |
+| `deploy-fc` / `deploy-ecs` / `deploy-docker` | 阿里云函数计算 / ECS / Docker 一键部署 |
+| `sql-query` | 数据库连接、查询、数据分析 |
+| `image-generator` | Stable Diffusion API 图片生成 |
+| `test-runner` | 自动化测试生成与执行 |
+| `notification` | 飞书 / 企业微信 / 钉钉通知推送 |
+| `git-master` | Git 操作规范 |
+| `log-standard` | 前后端日志规范 |
 
-OpenCode 内置的服务商（Anthropic、OpenAI 等）在中国网络环境下需要代理，但 OpenCode 的代理配置存在兼容性问题。
+### 📱 飞书 Bot — 离开电脑，AI 不停工
 
-Super OpenCode 解决方案：
-- 支持配置国内可直连的 API 代理服务
-- 支持 OpenRouter、硅基流动等中转服务
-- 一键配置，无需手动处理代理问题
+通过飞书 Bot 接入 OpenCode，手机上也能指挥 AI 写代码：
 
-## 功能特性
+<!-- 飞书 Bot 截图 -->
+<!-- ![飞书 Bot](screenshots/feishu-bot.png) -->
 
-### 安装向导
-- 自动检测并安装 OpenCode
-- 自动安装 Oh-My-OpenCode 插件
-- 技术栈选择（前端/后端）
-- API Key 配置
-- 个性化设置
-
-### 配置管理
-- 模型配置 - 为不同代理/场景配置模型
-- Skill 管理 - 启用/配置各种 Skill
-- 全局规范编辑 - 编辑 AGENTS.md
-- 备份还原 - 配置版本管理
-
-### 自动更新
-- 基于 GitHub Releases 的热更新
-- 后台检测新版本
-- 一键下载安装，无需手动下载
+- 自然语言对话，像跟同事聊天一样指挥 AI
+- 实时进度可视化（Todo 进度条、Diff、Git 状态）
+- 快捷命令：`/t` 看任务 · `/d` 看 Diff · `/x` 紧急终止
+- 零公网依赖，WebSocket 长连接，本地运行
 
 ## 快速开始
 
 ### 下载安装
 
 从 [Releases](https://github.com/lengjingxu/super_opencode/releases) 下载最新版本：
-- macOS Intel: `Super-OpenCode-x.x.x.dmg`
-- macOS Apple Silicon: `Super-OpenCode-x.x.x-arm64.dmg`
+
+- macOS Apple Silicon: `Super.OpenCode-x.x.x-arm64.dmg`
+- macOS Intel: `Super.OpenCode-x.x.x.dmg`
 
 ### 使用流程
 
@@ -103,11 +124,13 @@ Super OpenCode 解决方案：
     → 选择技术栈 → 配置 API Key → 完成！
 ```
 
-然后在终端使用 `opencode` 命令开始 AI 辅助编程。
+然后在终端运行 `opencode` 开始 AI 辅助编程。
 
 ## 开发
 
 ```bash
+cd config-app
+
 # 安装依赖
 npm install
 
@@ -118,31 +141,27 @@ npm start
 npm run build:mac
 ```
 
-## 发布新版本
+## 项目结构
 
-### 发布流程
-
-```bash
-# 1. 修改 package.json 中的 version（如 1.0.1 → 1.0.2）
-
-# 2. 构建并发布到 GitHub Releases
-GH_TOKEN=$(gh auth token) npm run publish:mac
 ```
-
-### 注意事项
-
-1. **确保 latest-mac.yml 上传成功** - 这是热更新的关键文件
-2. **版本号必须递增** - electron-updater 通过版本号判断是否有新版本
-3. **发布后验证** - 运行 `gh release view vX.X.X --repo lengjingxu/super_opencode` 确认文件完整
+├── config-app/          # Electron 桌面应用
+│   ├── src/             # 主界面 HTML
+│   ├── lib/             # 核心服务（配置管理、托管服务）
+│   ├── skills/          # 内置 Skills
+│   ├── templates/       # 配置模板
+│   ├── feishu_bot/      # 飞书 Bot 模块
+│   └── client/          # OpenCode 客户端 (SolidJS)
+├── landing-page/        # 产品介绍页
+├── templates/           # 全局配置模板
+└── tech-stacks/         # 技术栈预设配置
+```
 
 ## 致谢
 
-本项目基于以下优秀开源项目构建：
+基于以下开源项目构建：
 
-- **[OpenCode](https://github.com/opencode-ai/opencode)** - 强大的 AI 编程助手核心
-- **[Oh-My-OpenCode](https://github.com/pinkpixel-dev/oh-my-opencode)** - 多代理协作框架
-
-感谢这些项目的作者和贡献者们，是他们的工作让 AI 辅助编程变得更加强大和易用。
+- [OpenCode](https://github.com/opencode-ai/opencode) — AI 编程助手核心
+- [Oh-My-OpenCode](https://github.com/pinkpixel-dev/oh-my-opencode) — 多代理协作框架
 
 ## License
 
