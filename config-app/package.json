@@ -43,7 +43,7 @@
     "publish": {
       "provider": "github",
       "owner": "lengjingxu",
-      "repo": "oh-my-opencode-releases",
+      "repo": "super_opencode",
       "releaseType": "release"
     },
     "directories": {

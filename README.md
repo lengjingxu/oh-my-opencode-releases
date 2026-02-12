@@ -92,7 +92,7 @@ Super OpenCode 解决方案：
 
 ### 下载安装
 
-从 [Releases](https://github.com/lengjingxu/oh-my-opencode-releases/releases) 下载最新版本：
+从 [Releases](https://github.com/lengjingxu/super_opencode/releases) 下载最新版本：
 - macOS Intel: `Super-OpenCode-x.x.x.dmg`
 - macOS Apple Silicon: `Super-OpenCode-x.x.x-arm64.dmg`
 
@@ -133,7 +133,7 @@ GH_TOKEN=$(gh auth token) npm run publish:mac
 
 1. **确保 latest-mac.yml 上传成功** - 这是热更新的关键文件
 2. **版本号必须递增** - electron-updater 通过版本号判断是否有新版本
-3. **发布后验证** - 运行 `gh release view vX.X.X --repo lengjingxu/oh-my-opencode-releases` 确认文件完整
+3. **发布后验证** - 运行 `gh release view vX.X.X --repo lengjingxu/super_opencode` 确认文件完整
 
 ## 致谢
 

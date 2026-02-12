@@ -69,7 +69,7 @@ Super OpenCode 本身只做了一件事：把这两个项目的安装、配置�
 
 ### 下载安装
 
-从 [Releases](https://github.com/lengjingxu/oh-my-opencode-releases/releases) 下载最新版本：
+从 [Releases](https://github.com/lengjingxu/super_opencode/releases) 下载最新版本：
 - macOS Intel: `Super-OpenCode-x.x.x.dmg`
 - macOS Apple Silicon: `Super-OpenCode-x.x.x-arm64.dmg`
 
