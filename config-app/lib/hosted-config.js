@@ -78,6 +78,127 @@ const CATEGORY_MODEL_MAPPING = {
   'writing': 'secondary'
 };
 
+const AGENT_RECOMMENDATIONS = {
+  sisyphus: {
+    name: '主力执行 (Sisyphus)',
+    role: '核心任务执行，需要强大的代码能力',
+    prefer: ['opus', 'gpt4'],
+    tier: 'primary'
+  },
+  oracle: {
+    name: '架构顾问 (Oracle)',
+    role: '架构审查和调试，需要深度推理',
+    prefer: ['gpt4', 'opus'],
+    tier: 'reasoning'
+  },
+  prometheus: {
+    name: '任务规划 (Prometheus)',
+    role: '任务分解和规划',
+    prefer: ['opus', 'gpt4'],
+    tier: 'primary'
+  },
+  explore: {
+    name: '代码搜索 (Explore)',
+    role: '快速代码搜索，需要速度',
+    prefer: ['haiku', 'gemini_flash'],
+    tier: 'fast'
+  },
+  librarian: {
+    name: '文档查找 (Librarian)',
+    role: '文档和开源项目查找，需要多模态',
+    prefer: ['gemini_pro', 'gemini_flash'],
+    tier: 'multimodal'
+  },
+  'multimodal-looker': {
+    name: '图像分析 (Multimodal)',
+    role: '图片和PDF分析',
+    prefer: ['gemini_pro', 'gemini_flash'],
+    tier: 'multimodal'
+  },
+  metis: {
+    name: '需求分析 (Metis)',
+    role: '发现隐藏意图和歧义',
+    prefer: ['opus', 'gpt4'],
+    tier: 'primary'
+  },
+  momus: {
+    name: '方案审查 (Momus)',
+    role: '严格评审工作计划',
+    prefer: ['gpt4', 'opus'],
+    tier: 'reasoning'
+  },
+  atlas: {
+    name: '任务编排 (Atlas)',
+    role: '主编排器，管理任务全生命周期，混合调度 Categories 和 Skills',
+    prefer: ['sonnet', 'opus', 'gpt4'],
+    tier: 'primary'
+  },
+  hephaestus: {
+    name: '深度工作 (Hephaestus)',
+    role: '自主深度执行代理，目标导向，先探索后行动，端到端完成',
+    prefer: ['gpt4', 'opus'],
+    tier: 'reasoning'
+  },
+  compaction: {
+    name: '上下文压缩 (Compaction)',
+    role: '会话摘要压缩，推荐便宜快速模型',
+    prefer: ['haiku', 'gemini_flash', 'deepseek'],
+    tier: 'fast',
+    target: 'opencode.json'
+  }
+};
+
+const CATEGORY_RECOMMENDATIONS = {
+  'visual-engineering': {
+    name: '前端/UI开发',
+    role: '前端、UI/UX、设计',
+    prefer: ['gemini_pro', 'sonnet'],
+    tier: 'multimodal'
+  },
+  'ultrabrain': {
+    name: '复杂逻辑',
+    role: '复杂逻辑任务',
+    prefer: ['gpt4', 'opus'],
+    tier: 'reasoning'
+  },
+  'deep': {
+    name: '深度研究',
+    role: '深度问题研究',
+    prefer: ['gpt4', 'opus'],
+    tier: 'reasoning'
+  },
+  'artistry': {
+    name: '创意设计',
+    role: '创意和非常规方案',
+    prefer: ['gemini_pro', 'sonnet'],
+    tier: 'multimodal'
+  },
+  'quick': {
+    name: '快速任务',
+    role: '简单快速任务',
+    prefer: ['haiku', 'gemini_flash'],
+    tier: 'fast'
+  },
+  'unspecified-low': {
+    name: '通用低复杂度',
+    role: '低复杂度通用任务',
+    prefer: ['sonnet', 'gpt4_mini'],
+    tier: 'secondary'
+  },
+  'unspecified-high': {
+    name: '通用高复杂度',
+    role: '高复杂度通用任务（思维链推理）',
+    prefer: ['codex', 'opus', 'o1', 'o3'],
+    tier: 'reasoning'
+  },
+  'writing': {
+    name: '文档撰写',
+    role: '文档和技术写作',
+    prefer: ['gemini_flash', 'sonnet'],
+    tier: 'fast'
+  }
+};
+
 function getHostedConfig() {
   const config = readJsonFile(HOSTED_CONFIG_PATH);
   return { ...DEFAULT_HOSTED_CONFIG, ...config };
@@ -140,7 +261,7 @@ function buildHostedProvider(baseUrl, apiKey, modelList = []) {
 
   return {
     name: 'Oh-My-OpenCode 托管服务',
-    npm: '@ai-sdk/openai-compatible',
+    npm: '@ai-sdk/anthropic',
     options: {
       apiKey: apiKey,
       baseURL: baseUrl.replace(/\/$/, '') + '/v1'
@@ -177,14 +298,10 @@ function applyHostedServiceConfig(opencodeConfig, ohMyConfig, hostedConfig, remo
   ohMyConfig.agents = ohMyConfig.agents || {};
   for (const [agent, model] of Object.entries(agentModels)) {
     if (agent === 'compaction') {
-      const slashIndex = model.indexOf('/');
-      if (slashIndex > 0) {
+      if (model) {
         if (!opencodeConfig.agent) opencodeConfig.agent = {};
         opencodeConfig.agent.compaction = {
-          model: {
-            providerID: model.substring(0, slashIndex),
-            modelID: model.substring(slashIndex + 1)
-          }
+          model: model
         };
       }
       continue;
@@ -244,6 +361,8 @@ module.exports = {
   FALLBACK_PLAN_MODELS,
   AGENT_MODEL_MAPPING,
   CATEGORY_MODEL_MAPPING,
+  AGENT_RECOMMENDATIONS,
+  CATEGORY_RECOMMENDATIONS,
   
   getHostedConfig,
   saveHostedConfig,

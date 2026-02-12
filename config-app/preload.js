@@ -1,35 +1,12 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('configAPI', {
-  readConfig: (filename) => ipcRenderer.invoke('read-config', filename),
-  writeConfig: (filename, data) => ipcRenderer.invoke('write-config', filename, data),
-  readAgentsMd: () => ipcRenderer.invoke('read-agents-md'),
-  writeAgentsMd: (content) => ipcRenderer.invoke('write-agents-md', content),
-  getConfigDir: () => ipcRenderer.invoke('get-config-dir'),
-  
-  checkInstallStatus: () => ipcRenderer.invoke('check-install-status'),
-  installOpencode: () => ipcRenderer.invoke('install-opencode'),
-  installOhMyOpencode: () => ipcRenderer.invoke('install-oh-my-opencode'),
-  installPlugins: () => ipcRenderer.invoke('install-plugins'),
-  installUiuxSkill: () => ipcRenderer.invoke('install-uiux-skill'),
-  setupConfig: (options) => ipcRenderer.invoke('setup-config', options),
-  openConfigDir: () => ipcRenderer.invoke('open-config-dir'),
-  
-  launchOpencode: (mode) => ipcRenderer.invoke('launch-opencode', mode),
-  openWebUI: () => ipcRenderer.invoke('open-web-ui'),
-  getOpencodeConfig: () => ipcRenderer.invoke('get-opencode-config'),
-  saveOpencodeConfig: (config) => ipcRenderer.invoke('save-opencode-config', config),
-  
-  getDesignStyles: () => ipcRenderer.invoke('get-design-styles')
-});
-
 contextBridge.exposeInMainWorld('api', {
   checkInitStatus: () => ipcRenderer.invoke('check-install-status'),
   checkOpenCodeInstalled: async () => {
     const status = await ipcRenderer.invoke('check-install-status');
     return { installed: status.opencode };
   },
-  openExternal: (url) => require('electron').shell.openExternal(url),
+  openExternal: (url) => ipcRenderer.invoke('open-external', url),
   
   loadConfig: () => ipcRenderer.invoke('read-config', 'app-config.json'),
   saveConfig: (config) => ipcRenderer.invoke('write-config', 'app-config.json', config),
@@ -50,6 +27,7 @@ contextBridge.exposeInMainWorld('api', {
   writeAgentsMd: (content) => ipcRenderer.invoke('write-agents-md', content),
   getOpencodeConfig: () => ipcRenderer.invoke('get-opencode-config'),
   getOhMyOpencodeConfig: () => ipcRenderer.invoke('get-oh-my-opencode-config'),
+  getOhMyOpencodeTemplate: () => ipcRenderer.invoke('get-oh-my-opencode-template'),
   saveOpencodeConfig: (config) => ipcRenderer.invoke('save-opencode-config', config),
   
   loadAllConfigs: () => ipcRenderer.invoke('load-all-configs'),
@@ -110,7 +88,10 @@ contextBridge.exposeInMainWorld('api', {
   onFeishuBotLog: (callback) => ipcRenderer.on('feishu-bot-log', (_, log) => callback(log)),
   onFeishuBotStatus: (callback) => ipcRenderer.on('feishu-bot-status', (_, status) => callback(status)),
   
-  openClientWindow: () => ipcRenderer.invoke('open-client-window')
+  openClientWindow: () => ipcRenderer.invoke('open-client-window'),
+  openClientWindowWithDir: (dir) => ipcRenderer.invoke('open-client-window-with-dir', dir),
+  loadSessions: () => ipcRenderer.invoke('read-config-app-file', 'sessions.json'),
+  saveSessions: (data) => ipcRenderer.invoke('write-config-app-file', 'sessions.json', data)
 });
 
 contextBridge.exposeInMainWorld('updater', {

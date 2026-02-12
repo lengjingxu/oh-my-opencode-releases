@@ -133,7 +133,6 @@ function setupAutoUpdaterEvents() {
       error: err.message
     };
     sendStatusToWindow('update-error', { message: err.message });
-    console.error('[Updater] 更新错误:', err.message);
   });
 }
 
@@ -146,20 +145,15 @@ function setupIPCHandlers() {
     return await checkForUpdates(false);
   });
 
-  // 下载更新
-  ipcMain.handle('updater:download', async () => {
-    try {
-      await autoUpdater.downloadUpdate();
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  });
+   // 下载更新
+   ipcMain.handle('updater:download', async () => {
+     return await downloadUpdate();
+   });
 
-  // 安装更新（重启应用）
-  ipcMain.handle('updater:install', () => {
-    autoUpdater.quitAndInstall(false, true);
-  });
+   // 安装更新（重启应用）
+   ipcMain.handle('updater:install', () => {
+     installUpdate();
+   });
 
   // 获取当前状态
   ipcMain.handle('updater:status', () => {

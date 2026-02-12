@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const DEFAULT_BASE_URL = 'http://8.153.201.122:3000';
+const DEFAULT_BASE_URL = require('./hosted-config').DEFAULT_HOSTED_CONFIG.baseUrl;
 const DEFAULT_TIMEOUT = 30000;
 
 // Session 持久化路径

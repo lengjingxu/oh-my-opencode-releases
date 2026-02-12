@@ -4,11 +4,11 @@
   "agents": {
     "sisyphus": {
       "model": "unified-proxy/claude-opus-4-5",
-      "prompt_append": "使用中文回答。"
+      "prompt_append": "## 核心工作规范\n- 使用中文回答和注释\n- 代码完成后必须通过测试才能交付\n- 关键操作必须有日志"
     },
     "oracle": {
       "model": "unified-proxy/gpt-4.1",
-      "prompt_append": "使用中文回答。你是架构审查和调试专家。"
+      "prompt_append": "使用中文回答。你是架构审查和调试专家。\n\n## 如果进行测试工作（条件触发）\n- 必须记录详细测试日志：步骤、输入参数、预期结果、实际结果、时间戳\n- 测试完成后由子代理审查日志完整性\n- 审查结论标注：通过(PASS)、失败(FAIL)、需调查(INVESTIGATE)"
     },
     "prometheus": {
       "model": "unified-proxy/claude-opus-4-5",
@@ -16,11 +16,11 @@
     },
     "explore": {
       "model": "unified-proxy/claude-haiku-4-5",
-      "prompt_append": "使用中文搜索和回答。"
+      "prompt_append": "使用中文搜索和回答。你是代码库探索专家，快速定位相关文件和模式。"
     },
     "librarian": {
       "model": "unified-proxy/gemini-2.5-pro",
-      "prompt_append": "使用中文回答。你是文档和开源项目查找专家。"
+      "prompt_append": "使用中文回答。你是文档和开源项目查找专家。优先搜索官方文档和高质量 GitHub 仓库。"
     },
     "multimodal-looker": {
       "model": "unified-proxy/gemini-2.5-flash",
@@ -28,7 +28,7 @@
     },
     "metis": {
       "model": "unified-proxy/claude-opus-4-5",
-      "prompt_append": "使用中文回答。你是需求分析专家，善于发现隐藏意图。"
+      "prompt_append": "使用中文回答。你是需求分析专家，善于发现隐藏意图和歧义。"
     },
     "momus": {
       "model": "unified-proxy/gpt-4.1",

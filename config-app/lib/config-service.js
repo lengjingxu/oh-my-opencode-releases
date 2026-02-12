@@ -4,8 +4,12 @@ const os = require('os');
 
 const CONFIG_DIR = path.join(os.homedir(), '.config', 'opencode');
 const CONFIG_APP_DIR = path.join(CONFIG_DIR, 'config-app');
+const AUTH_DIR = path.join(os.homedir(), '.local', 'share', 'opencode');
 const SKILLS_DIR = path.join(CONFIG_DIR, 'skills');
+const HOOKS_DIR = path.join(CONFIG_DIR, 'hooks');
+const PLUGINS_DIR = path.join(CONFIG_DIR, 'plugins');
 const CREDENTIALS_PATH = path.join(CONFIG_DIR, 'credentials.json');
+const DEFAULT_SERVER_PORT = 4096;
 
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) {
@@ -133,6 +137,69 @@ function checkSkillInstalled(skillName) {
   return fs.existsSync(skillPath);
 }
 
+function getFcConfigMasked() {
+  const data = getFcConfig();
+  if (data.accounts.length > 0) {
+    data.accounts = data.accounts.map(acc => ({
+      ...acc,
+      access_key_secret: acc.access_key_secret ? '••••••••' : ''
+    }));
+  }
+  return data;
+}
+
+function getSqlConfigMasked() {
+  const data = getSqlConfig();
+  if (data.connections) {
+    for (const key of Object.keys(data.connections)) {
+      if (data.connections[key].password) {
+        data.connections[key].password = '••••••••';
+      }
+    }
+  }
+  return data;
+}
+
+function getFeishuConfig() {
+  const cred = getCredentials();
+  const feishuConfig = cred.feishu || {};
+  return {
+    app_id: feishuConfig.app_id || '',
+    app_secret: feishuConfig.app_secret ? '••••••••' : '',
+    working_dir: feishuConfig.working_dir || '',
+    server_host: feishuConfig.server_host || '127.0.0.1',
+    server_port: feishuConfig.server_port || DEFAULT_SERVER_PORT,
+    use_server_mode: feishuConfig.use_server_mode !== false
+  };
+}
+
+function saveFeishuConfig(config) {
+  const cred = getCredentials();
+  const existingSecret = cred.feishu?.app_secret || '';
+  cred.feishu = {
+    app_id: config.app_id || '',
+    app_secret: config.app_secret === '••••••••' ? existingSecret : (config.app_secret || ''),
+    working_dir: config.working_dir || '',
+    server_host: config.server_host || '127.0.0.1',
+    server_port: config.server_port || DEFAULT_SERVER_PORT,
+    use_server_mode: config.use_server_mode !== false
+  };
+  saveCredentials(cred);
+}
+
+function checkPortAvailable(port) {
+  const net = require('net');
+  return new Promise((resolve) => {
+    const server = net.createServer();
+    server.once('error', () => resolve(false));
+    server.once('listening', () => {
+      server.close();
+      resolve(true);
+    });
+    server.listen(port, '127.0.0.1');
+  });
+}
+
 function createBackup(configType, data) {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   const backupDir = path.join(CONFIG_DIR, 'backups');
@@ -199,8 +266,12 @@ function restoreBackup(backupName) {
 module.exports = {
   CONFIG_DIR,
   CONFIG_APP_DIR,
+  AUTH_DIR,
   SKILLS_DIR,
+  HOOKS_DIR,
+  PLUGINS_DIR,
   CREDENTIALS_PATH,
+  DEFAULT_SERVER_PORT,
   ensureDir,
   readJsonFile,
   writeJsonFile,
@@ -209,11 +280,16 @@ module.exports = {
   updateCredentials,
   getFcConfig,
   saveFcConfig,
+  getFcConfigMasked,
   getSqlConfig,
   saveSqlConfig,
+  getSqlConfigMasked,
   getImageGeneratorConfig,
   saveImageGeneratorConfig,
+  getFeishuConfig,
+  saveFeishuConfig,
   checkSkillInstalled,
+  checkPortAvailable,
   createBackup,
   listBackups,
   restoreBackup
